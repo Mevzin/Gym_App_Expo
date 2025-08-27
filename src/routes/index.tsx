@@ -1,8 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Dashboard from '../screens/dashboard';
-import { EvilIcons, FontAwesome, MaterialCommunityIcons, MaterialIcons, Octicons } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import Sessions from '../screens/sessions';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,7 +37,7 @@ function Routes() {
                 />
                 <Tab.Screen
                     name='Treinos'
-                    component={Dashboard}
+                    component={Sessions}
                     options={{
                         tabBarIcon: (({ size, color }) => (
                             <MaterialCommunityIcons
