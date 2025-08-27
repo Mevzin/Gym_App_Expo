@@ -1,13 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import "./global.css"
 import Routes from './src/routes';
 
 export default function App() {
 
-
+  // Platform.OS === 'ios' ? 20 : 0
+  // flex-1 pt-10 bg-primary
   return (
-    <View className='flex-1 pt-10 bg-primary'>
+    <View className={`flex-1 ${Platform.OS === 'ios' ? 'pt-14' : 'pt-10'} bg-primary`}>
       <StatusBar style="light" />
       <Routes />
     </View>
