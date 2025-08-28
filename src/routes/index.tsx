@@ -62,7 +62,7 @@ function Routes() {
                         ))
                     }}
                 />
-                <Tab.Screen
+                {/* <Tab.Screen
                     name='Agenda'
                     component={Dashboard}
                     options={{
@@ -74,7 +74,7 @@ function Routes() {
                             />
                         ))
                     }}
-                />
+                /> */}
                 <Tab.Screen
                     name='Profile'
                     component={Dashboard}
