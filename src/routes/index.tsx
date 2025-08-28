@@ -4,6 +4,7 @@ import { FontAwesome, MaterialCommunityIcons, MaterialIcons, Octicons } from '@e
 import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Sessions from '../screens/sessions';
+import Progress from '../screens/progress';
 
 const Tab = createBottomTabNavigator();
 
@@ -50,7 +51,7 @@ function Routes() {
                 />
                 <Tab.Screen
                     name='Progresso'
-                    component={Dashboard}
+                    component={Progress}
                     options={{
                         tabBarIcon: (({ size, color }) => (
                             <Octicons
