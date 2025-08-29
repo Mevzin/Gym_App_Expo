@@ -1,0 +1,217 @@
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL, API_TIMEOUT } from '@env';
+
+const api = axios.create({
+    baseURL: API_URL,
+    timeout: parseInt(API_TIMEOUT) || 10000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+api.interceptors.request.use(async (config) => {
+    const token = await AsyncStorage.getItem('@GymApp:token');
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+});
+
+export const authService = {
+    
+    login: async (email: string, password: string) => {
+        try {
+            const response = await api.post('/user/login', { email, password });
+
+            if (response.data.token) {
+                await AsyncStorage.setItem('@GymApp:token', response.data.token);
+                await AsyncStorage.setItem('@GymApp:user', JSON.stringify(response.data.user));
+            }
+
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    
+    register: async (userData: any) => {
+        try {
+            const response = await api.post('/user/register', userData);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    
+    logout: async () => {
+        try {
+            await AsyncStorage.removeItem('@GymApp:token');
+            await AsyncStorage.removeItem('@GymApp:user');
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    
+    isAuthenticated: async () => {
+        const token = await AsyncStorage.getItem('@GymApp:token');
+        return !!token;
+    },
+
+    
+    getCurrentUser: async () => {
+        try {
+            const userString = await AsyncStorage.getItem('@GymApp:user');
+            if (userString) {
+                return JSON.parse(userString);
+            }
+            return null;
+        } catch (error) {
+            return null;
+        }
+    },
+};
+
+export const exerciseService = {
+    
+    getExercises: async (fileId: string) => {
+        try {
+            const response = await api.get(`/file/getFileById/${fileId}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    
+    getExercisesByUserId: async (userId: any) => {
+        try {
+            const response = await api.get(`/file/user/${userId}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    
+    getExercisesByDay: async (day: any) => {
+        try {
+            const userString = await AsyncStorage.getItem('@GymApp:user');
+            let userId = null;
+
+            if (userString) {
+                const user = JSON.parse(userString);
+                userId = user._id || user.id;
+            }
+
+            if (!userId) {
+                throw new Error('Usuário não encontrado');
+            }
+            const response = await api.get(`/files/day/${day}/${userId}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    updateExercisesByDay: async (day: string, exercises: any[]) => {
+        try {
+            const userString = await AsyncStorage.getItem('@GymApp:user');
+            let userId = null;
+
+            if (userString) {
+                const user = JSON.parse(userString);
+                userId = user._id || user.id;
+            }
+
+            if (!userId) {
+                throw new Error('Usuário não encontrado');
+            }
+            const response = await api.put(`/files/day/${day}`, { userId, exercises });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    markExerciseAsCompleted: async (exerciseId: string) => {
+        try {
+            const response = await api.put(`/files/exercise/${exerciseId}/complete`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    markExerciseAsCompletedByNameAndDay: async (exerciseName: string, day: string) => {
+        try {
+            const userString = await AsyncStorage.getItem('@GymApp:user');
+            let userId = null;
+
+            if (userString) {
+                const user = JSON.parse(userString);
+                userId = user._id || user.id;
+            }
+
+            if (!userId) {
+                throw new Error('Usuário não encontrado');
+            }
+            const response = await api.put(`/files/exercise/complete`, { exerciseName, day, userId });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    checkUserFile: async () => {
+        try {
+            const userString = await AsyncStorage.getItem('@GymApp:user');
+            let userId = null;
+
+            if (userString) {
+                const user = JSON.parse(userString);
+                userId = user._id || user.id;
+            }
+
+            if (!userId) {
+                throw new Error('Usuário não encontrado');
+            }
+
+            const response = await api.post('/files/getFileByUserId', { userId });
+            return response.data;
+        } catch (error) {
+            return null;
+        }
+    },
+
+    createFile: async (exerciseData: any) => {
+        try {
+            
+            const userString = await AsyncStorage.getItem('@GymApp:user');
+            let userId = null;
+
+            if (userString) {
+                const user = JSON.parse(userString);
+                userId = user._id || user.id;
+            }
+
+            if (!userId) {
+                throw new Error('Usuário não encontrado');
+            }
+            const response = await api.post('/files/createFile', {
+                userId,
+                ...exerciseData
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+};
+
+export default api;

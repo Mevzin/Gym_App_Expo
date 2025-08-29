@@ -7,7 +7,7 @@ module.exports = {
     "useSystemTheme": true
   },
   "components": {
-    "outDir": "./components/ui",
+    "outDir": "./src/components/ui",
     "defaultProps": {
       "Button": {
         "variant": "default",

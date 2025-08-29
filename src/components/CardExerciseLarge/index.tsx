@@ -1,18 +1,36 @@
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
 import Button from "../ui/button";
-import { useState } from "react";
+import { useEffect } from "react";
+import { exerciseService } from "../../services/api";
+import { getExerciseName } from "../../utils/exerciseUtils";
+import { useCompletedExercises } from "../../contexts/CompletedExercisesContext";
 
 interface ICardExerciseLargeProps {
-    isFinished: boolean
+    name: string;
+    value: string;
+    isFinished?: boolean;
 }
 
-export default function CardExerciseLarge() {
+export default function CardExerciseLarge({ name, value, isFinished: initialIsFinished = false }: ICardExerciseLargeProps) {
+    const { isExerciseCompleted, markExerciseAsCompleted, unmarkExerciseAsCompleted, refreshCompletedExercises } = useCompletedExercises();
+    
+    const isFinished = isExerciseCompleted(name);
 
-    const [isFinished, setIsFinished] = useState(false)
+    useEffect(() => {
+        refreshCompletedExercises();
+    }, [name, refreshCompletedExercises]);
 
-    function handleFinished() {
-        setIsFinished(!isFinished)
+    async function handleFinished() {
+        try {
+            if (isFinished) {
+                await unmarkExerciseAsCompleted(name);
+            } else {
+                await markExerciseAsCompleted(name);
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar status do exercício:', error);
+        }
     }
 
     if (isFinished == false) {
@@ -27,8 +45,8 @@ export default function CardExerciseLarge() {
                         />
                     </View>
                     <View>
-                        <Text className="text-white/30 font-bold text-2xl">Bench Press</Text>
-                        <Text className="text-white/30 font-extralight">4 sets x 8-10 reps</Text>
+                        <Text className="text-white/30 font-bold text-2xl">{getExerciseName(name)}</Text>
+                        <Text className="text-white/30 font-extralight">{value}</Text>
                     </View>
                 </View>
                 <View>
@@ -52,8 +70,8 @@ export default function CardExerciseLarge() {
                         />
                     </View>
                     <View>
-                        <Text className="text-white font-bold text-2xl">Bench Press</Text>
-                        <Text className="text-white font-extralight">4 sets x 8-10 reps</Text>
+                        <Text className="text-white font-bold text-2xl">{getExerciseName(name)}</Text>
+                        <Text className="text-white font-extralight">{value}</Text>
                     </View>
                 </View>
                 <View>

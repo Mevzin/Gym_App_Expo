@@ -1,0 +1,230 @@
+{
+    "Pernas": [
+        {
+            "label": "Agachamento Livre",
+            "value": "agachamentoLivre"
+        },
+        {
+            "label": "Agachamento Hack",
+            "value": "agachamentoHack"
+        },
+        {
+            "label": "Leg Press",
+            "value": "legPress"
+        },
+        {
+            "label": "Cadeira Extensora",
+            "value": "cadeiraExtensora"
+        },
+        {
+            "label": "Cadeira Flexora",
+            "value": "cadeiraFlexora"
+        },
+        {
+            "label": "Stiff",
+            "value": "stiff"
+        },
+        {
+            "label": "Afundo",
+            "value": "afundo"
+        },
+        {
+            "label": "Levantamento Terra",
+            "value": "levantamentoTerra"
+        },
+        {
+            "label": "Panturrilha em Pé",
+            "value": "panturrilhaEmPe"
+        },
+        {
+            "label": "Panturrilha Sentado",
+            "value": "panturrilhaSentado"
+        }
+    ],
+    "Braços": {
+        "Bíceps": [
+            {
+                "label": "Rosca Direta",
+                "value": "roscaDireta"
+            },
+            {
+                "label": "Rosca Alternada",
+                "value": "roscaAlternada"
+            },
+            {
+                "label": "Rosca Martelo",
+                "value": "roscaMartelo"
+            },
+            {
+                "label": "Rosca Concentrada",
+                "value": "roscaConcentrada"
+            },
+            {
+                "label": "Rosca Scott",
+                "value": "roscaScott"
+            },
+            {
+                "label": "Rosca Inversa",
+                "value": "roscaInversa"
+            }
+        ],
+        "Tríceps": [
+            {
+                "label": "Tríceps Testa",
+                "value": "tricepsTesta"
+            },
+            {
+                "label": "Tríceps Francês",
+                "value": "tricepsFrances"
+            },
+            {
+                "label": "Tríceps Corda",
+                "value": "tricepsCorda"
+            },
+            {
+                "label": "Tríceps Banco",
+                "value": "tricepsBanco"
+            },
+            {
+                "label": "Mergulho nas Paralelas",
+                "value": "mergulhoNasParalelas"
+            }
+        ]
+    },
+    "Peito": [
+        {
+            "label": "Supino Reto",
+            "value": "supinoReto"
+        },
+        {
+            "label": "Supino Inclinado",
+            "value": "supinoInclinado"
+        },
+        {
+            "label": "Supino Declinado",
+            "value": "supinoDeclinado"
+        },
+        {
+            "label": "Crucifixo Reto",
+            "value": "crucifixoReto"
+        },
+        {
+            "label": "Crucifixo Inclinado",
+            "value": "crucifixoInclinado"
+        },
+        {
+            "label": "Crucifixo Declinado",
+            "value": "crucifixoDeclinado"
+        },
+        {
+            "label": "Peck Deck",
+            "value": "peckDeck"
+        },
+        {
+            "label": "Pullover",
+            "value": "pullover"
+        },
+        {
+            "label": "Flexão de Braço",
+            "value": "flexaoDeBraco"
+        }
+    ],
+    "Costas": [
+        {
+            "label": "Puxada Alta",
+            "value": "puxadaAlta"
+        },
+        {
+            "label": "Puxada Frente",
+            "value": "puxadaFrente"
+        },
+        {
+            "label": "Puxada Atrás",
+            "value": "puxadaAtras"
+        },
+        {
+            "label": "Barra Fixa",
+            "value": "barraFixa"
+        },
+        {
+            "label": "Remada Curvada",
+            "value": "remadaCurvada"
+        },
+        {
+            "label": "Remada Unilateral",
+            "value": "remadaUnilateral"
+        },
+        {
+            "label": "Remada Baixa",
+            "value": "remadaBaixa"
+        },
+        {
+            "label": "Remada Cavalinho",
+            "value": "remadaCavalinho"
+        },
+        {
+            "label": "Levantamento Terra Costas",
+            "value": "levantamentoTerraCostas"
+        }
+    ],
+    "Ombros": [
+        {
+            "label": "Desenvolvimento Halteres",
+            "value": "desenvolvimentoHalteres"
+        },
+        {
+            "label": "Desenvolvimento Barra",
+            "value": "desenvolvimentoBarra"
+        },
+        {
+            "label": "Elevação Lateral",
+            "value": "elevacaoLateral"
+        },
+        {
+            "label": "Elevação Frontal",
+            "value": "elevacaoFrontal"
+        },
+        {
+            "label": "Elevação Posterior",
+            "value": "elevacaoPosterior"
+        },
+        {
+            "label": "Encolhimento Ombros",
+            "value": "encolhimentoOmbros"
+        },
+        {
+            "label": "Arnold Press",
+            "value": "arnoldPress"
+        }
+    ],
+    "Abdomen": [
+        {
+            "label": "Abdominal Supra",
+            "value": "abdominalSupra"
+        },
+        {
+            "label": "Abdominal Infra",
+            "value": "abdominalInfra"
+        },
+        {
+            "label": "Abdominal Oblíquo",
+            "value": "abdominalObliquo"
+        },
+        {
+            "label": "Prancha",
+            "value": "prancha"
+        },
+        {
+            "label": "Elevação de Pernas",
+            "value": "elevacaoDePernas"
+        },
+        {
+            "label": "Ab Wheel",
+            "value": "abWheel"
+        },
+        {
+            "label": "Bicicleta no Ar",
+            "value": "bicicletaNoAr"
+        }
+    ]
+}
