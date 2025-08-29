@@ -25,7 +25,6 @@ interface ButtonProps extends TouchableOpacityProps {
   asChild?: boolean;
 }
 
-// Type for icon elements
 interface IconElement extends React.ReactElement {
   props: {
     svg?: boolean;

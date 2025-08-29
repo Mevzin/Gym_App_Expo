@@ -11,7 +11,6 @@ import {
   cardFooterClassNames,
 } from './styles';
 
-// Main Card container
 interface CardProps extends ViewProps {
   className?: string;
   mode?: 'light' | 'dark';
@@ -31,7 +30,6 @@ const Card = ({ className, mode = 'light', ...props }: CardProps) => {
   );
 };
 
-// Card Header
 interface CardHeaderProps extends ViewProps {
   className?: string;
 }
@@ -40,7 +38,6 @@ const CardHeader = ({ className, ...props }: CardHeaderProps) => {
   return <View className={cn(cardHeaderClassNames.base, className)} {...props} />;
 };
 
-// Card Title
 interface CardTitleProps extends TextProps {
   className?: string;
   mode?: 'light' | 'dark';
@@ -55,7 +52,6 @@ const CardTitle = ({ className, mode = 'light', ...props }: CardTitleProps) => {
   );
 };
 
-// Card Description
 interface CardDescriptionProps extends TextProps {
   className?: string;
   mode?: 'light' | 'dark';
@@ -70,7 +66,6 @@ const CardDescription = ({ className, mode = 'light', ...props }: CardDescriptio
   );
 };
 
-// Card Content
 interface CardContentProps extends ViewProps {
   className?: string;
 }
@@ -79,7 +74,6 @@ const CardContent = ({ className, ...props }: CardContentProps) => {
   return <View className={cn(cardContentClassNames.base, className)} {...props} />;
 };
 
-// Card Footer
 interface CardFooterProps extends ViewProps {
   className?: string;
 }

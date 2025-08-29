@@ -1,4 +1,3 @@
-/** @type {import('@nativecn/cli').Config} */
 module.exports = {
   "styling": "nativewind",
   "theme": {

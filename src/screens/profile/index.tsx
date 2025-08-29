@@ -1,5 +1,4 @@
-import { SafeAreaView, ScrollView, Text, View, Image } from "react-native";
-import CardProfile from "../../components/CardProfile";
+import { SafeAreaView, ScrollView, Text, View } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { useWindowDimensions } from 'react-native';
 import Button from "../../components/ui/button";

@@ -1,14 +1,11 @@
-// NativeWind classes
 export const buttonClassNames = {
   base: 'rounded-md items-center justify-center',
 
-  // Size variants
   size_default: 'h-10 px-4 py-2 flex-row gap-2',
   size_sm: 'h-9 rounded-sm px-3 flex-row gap-2',
   size_lg: 'h-11 rounded-lg px-8 flex-row gap-2',
   size_icon: 'h-10 w-10 p-0',
 
-  // Light mode variants
   light_variant_default: 'bg-primary text-primary-foreground',
   light_variant_destructive: 'bg-destructive text-destructive-foreground',
   light_variant_outline:
@@ -17,7 +14,6 @@ export const buttonClassNames = {
   light_variant_ghost: 'hover:bg-accent hover:text-accent-foreground',
   light_variant_link: 'text-primary underline-offset-4 hover:underline',
 
-  // Dark mode variants
   dark_variant_default: 'bg-dark-primary text-dark-primary-foreground',
   dark_variant_destructive: 'bg-dark-destructive text-dark-destructive-foreground',
   dark_variant_outline:
@@ -27,7 +23,6 @@ export const buttonClassNames = {
   dark_variant_ghost: 'hover:bg-dark-accent hover:text-dark-accent-foreground',
   dark_variant_link: 'text-dark-primary underline-offset-4 hover:underline',
 
-  // States
   pressed: {
     default: 'opacity-90',
     destructive: 'opacity-90',
@@ -40,8 +35,6 @@ export const buttonClassNames = {
 
   disabled: 'opacity-50 pointer-events-none',
 };
-
-// Text classNames for different variants and modes
 export const textClassNames = {
   base: 'text-sm font-medium',
   size: {
@@ -68,7 +61,6 @@ export const textClassNames = {
   },
 };
 
-// Icon colors for different variants and modes
 export const iconColors = {
   light: {
     default: '#FFFFFF',

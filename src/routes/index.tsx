@@ -63,19 +63,7 @@ function Routes() {
                         ))
                     }}
                 />
-                {/* <Tab.Screen
-                    name='Agenda'
-                    component={Dashboard}
-                    options={{
-                        tabBarIcon: (({ size, color }) => (
-                            <MaterialIcons
-                                name="calendar-today"
-                                size={size}
-                                color={color}
-                            />
-                        ))
-                    }}
-                /> */}
+
                 <Tab.Screen
                     name='Profile'
                     component={Profile}
