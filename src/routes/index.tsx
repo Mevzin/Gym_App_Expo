@@ -5,6 +5,7 @@ import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Sessions from '../screens/sessions';
 import Progress from '../screens/progress';
+import Profile from '../screens/profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -77,7 +78,7 @@ function Routes() {
                 /> */}
                 <Tab.Screen
                     name='Profile'
-                    component={Dashboard}
+                    component={Profile}
                     options={{
                         tabBarIcon: (({ size, color }) => (
                             <FontAwesome
