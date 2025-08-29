@@ -36,7 +36,7 @@ export const buttonClassNames = {
   disabled: 'opacity-50 pointer-events-none',
 };
 export const textClassNames = {
-  base: 'text-sm font-medium',
+  base: 'text-sm font-roboto-medium',
   size: {
     default: 'text-sm',
     sm: 'text-xs',

@@ -297,7 +297,7 @@ export function WorkoutConfiguration() {
 
     return (
         <View className="flex-1 bg-[#1a1a1a]">
-            {/* Header */}
+
             <View className="flex-row items-center justify-between p-4 pt-12 bg-[#2a2a2a]">
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Feather name="arrow-left" size={24} color="white" />

@@ -23,7 +23,7 @@ export default function Profile() {
             setUserData(user);
         } catch (error) {
             console.error('Erro ao carregar dados do usuário:', error);
-            // Fallback para dados do AsyncStorage
+    
             const localUser = await authService.getCurrentUser();
             setUserData(localUser);
         } finally {
@@ -229,7 +229,7 @@ export default function Profile() {
                             </View>
                         </View>
 
-                        {/* Botão de Sair */}
+        
                         <View className="w-full mt-8 mb-6">
                             <TouchableOpacity 
                                 className="w-full bg-red-600 rounded-lg p-4 items-center"

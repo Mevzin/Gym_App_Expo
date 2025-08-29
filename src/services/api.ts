@@ -76,7 +76,7 @@ export const authService = {
         }
     },
 
-    // Buscar dados completos do usuário do servidor
+
     getCurrentUserFromServer: async () => {
         try {
             const response = await api.get('/user/me');

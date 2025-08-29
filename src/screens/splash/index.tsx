@@ -87,8 +87,8 @@ export default function SplashScreen() {
                             style={{ width: 120, height: 120 }}
                             resizeMode="contain"
                         />
-                        <Text className="text-white text-4xl font-bold mt-6">FITNESS CENTER</Text>
-                        <Text className="text-gray-400 text-lg mt-2">Seu parceiro de treino</Text>
+                        <Text className="text-white text-4xl font-roboto-bold mt-6">FITNESS CENTER</Text>
+                        <Text className="text-gray-400 text-lg font-roboto-regular mt-2">Seu parceiro de treino</Text>
                         
                         <View className="mt-8">
                             <View className="w-16 h-1 bg-[#c21409] rounded-full" />

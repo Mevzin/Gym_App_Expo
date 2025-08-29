@@ -48,12 +48,12 @@ export default function Login() {
                         style={{ width: 80, height: 80 }}
                         resizeMode="contain"
                     />
-                    <Text className="text-white text-3xl font-bold mt-4">FITNESS CENTER</Text>
-                    <Text className="text-gray-400 text-lg">Seu parceiro de treino</Text>
+                    <Text className="text-white text-3xl font-roboto-bold mt-4">FITNESS CENTER</Text>
+                    <Text className="text-gray-400 text-lg font-roboto-regular">Seu parceiro de treino</Text>
                 </View>
 
                 <View className="w-full mb-6">
-                    <Text className="text-white text-lg font-bold mb-2">Email</Text>
+                    <Text className="text-white text-lg font-roboto-medium mb-2">Email</Text>
                     <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
                         <FontAwesome name="envelope-o" size={20} color="#9ba1ad" />
                         <TextInput
@@ -68,8 +68,8 @@ export default function Login() {
                     </View>
                 </View>
 
-                <View className="w-full mb-8">
-                    <Text className="text-white text-lg font-bold mb-2">Senha</Text>
+                <View className="w-full mb-6">
+                    <Text className="text-white text-lg font-roboto-medium mb-2">Senha</Text>
                     <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
                         <FontAwesome name="lock" size={20} color="#9ba1ad" />
                         <TextInput
