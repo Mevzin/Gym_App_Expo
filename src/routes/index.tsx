@@ -10,6 +10,7 @@ import Profile from '../screens/profile';
 import Login from '../screens/login';
 import Register from '../screens/register';
 import { WorkoutConfiguration } from '../screens/workoutConfiguration';
+import SplashScreen from '../screens/splash';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -88,7 +89,8 @@ function AppTabs() {
 function Routes() {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Splash" component={SplashScreen} />
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Register" component={Register} />
                 <Stack.Screen name="AppTabs" component={AppTabs} />

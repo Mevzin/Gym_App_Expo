@@ -75,6 +75,16 @@ export const authService = {
             return null;
         }
     },
+
+    // Buscar dados completos do usuário do servidor
+    getCurrentUserFromServer: async () => {
+        try {
+            const response = await api.get('/user/me');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export const exerciseService = {

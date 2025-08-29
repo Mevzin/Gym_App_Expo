@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
+import { SafeAreaView, Text, View, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import Button from '../../components/ui/button';
 import { useNavigation } from '@react-navigation/native';
 import { authService } from '../../services/api';
@@ -43,12 +43,12 @@ export default function Login() {
         <SafeAreaView className="flex-1 bg-primary">
             <View className="flex-1 justify-center items-center px-8">
                 <View className="w-full items-center mb-10">
-                    <MaterialCommunityIcons
-                        name="weight-lifter"
-                        size={80}
-                        color="#c21409"
+                    <Image
+                        source={require('../../../assets/icon.png')}
+                        style={{ width: 80, height: 80 }}
+                        resizeMode="contain"
                     />
-                    <Text className="text-white text-3xl font-bold mt-4">GYM SYSTEM</Text>
+                    <Text className="text-white text-3xl font-bold mt-4">FITNESS CENTER</Text>
                     <Text className="text-gray-400 text-lg">Seu parceiro de treino</Text>
                 </View>
 

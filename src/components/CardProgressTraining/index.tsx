@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Text, useWindowDimensions, View } from "react-native";
 import * as Progress from 'react-native-progress';
 import { useEffect, useState } from "react";
 import { exerciseService } from "../../services/api";
@@ -15,6 +15,8 @@ export default function CardProgressTraining() {
     const [currentDay, setCurrentDay] = useState('');
     const [dayTitle, setDayTitle] = useState('');
     const [loading, setLoading] = useState(true);
+
+    const { width } = useWindowDimensions()
 
     useEffect(() => {
         const dayOfWeek = getDayOfWeek();
@@ -47,13 +49,13 @@ export default function CardProgressTraining() {
     const loadExercisesData = async (day: string) => {
         try {
             setLoading(true);
-            
+
             const userFile = await exerciseService.checkUserFile();
-            
+
             if (userFile) {
                 const response = await exerciseService.getExercisesByDay(day);
                 setExercises(response.exercises || []);
-                
+
                 await refreshCompletedExercises();
             } else {
                 setExercises([]);
@@ -112,10 +114,10 @@ export default function CardProgressTraining() {
     }
 
     const isCompleted = completedCount === totalExercises;
-    const cardColor = isCompleted ? "#22c55e" : "#c21409";
+    const cardColor = isCompleted ? "#0a943d" : "#c21409";
 
     return (
-        <View className="w-[95%] h-32 my-6 px-5 rounded-xl justify-center" style={{backgroundColor: cardColor}}>
+        <View className="w-[95%] h-32 my-6 px-5 rounded-xl justify-center" style={{ backgroundColor: cardColor }}>
             <View className="flex-row justify-between mb-5">
                 <View>
                     <Text className="text-white font-extrabold text-2xl">{dayTitle}</Text>
@@ -127,14 +129,15 @@ export default function CardProgressTraining() {
                     <Text className="text-white font-extralight">completed</Text>
                 </View>
             </View>
-            <Progress.Bar 
-                progress={progress} 
-                width={340} 
-                animated={true} 
-                color="#4abdd4" 
-                borderColor="gray" 
-                borderWidth={0.2} 
-                height={10} 
+            <Progress.Bar
+                progress={progress}
+                width={width / 1.16}
+                animated={true}
+                color="#4abdd4"
+                borderColor="gray"
+                borderWidth={0.2}
+                height={10}
+                unfilledColor="#384152"
             />
         </View>
     );
