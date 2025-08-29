@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { SafeAreaView, Text, View, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import Button from '../../components/ui/button';
 import { useNavigation } from '@react-navigation/native';
@@ -30,7 +30,7 @@ export default function Register() {
         setIsLoading(true);
 
         try {
-        
+
             const userData = {
                 name,
                 email,
@@ -57,12 +57,32 @@ export default function Register() {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View className="flex-1 justify-center items-center px-8 py-10">
                     <View className="w-full items-center mb-8">
-                        <MaterialCommunityIcons
-                            name="weight-lifter"
-                            size={60}
-                            color="#c21409"
-                        />
-                        <Text className="text-white text-3xl font-bold mt-2">CRIAR CONTA</Text>
+                        <View style={{
+                            borderRadius: 47,
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            padding: 3
+                        }}>
+                            <View style={{
+                                borderRadius: 47,
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                padding: 3
+                            }}>
+                                <View style={{
+                                    borderRadius: 44,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                    padding: 4,
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <Image
+                                        source={require('../../../assets/icon.png')}
+                                        style={{ width: 80, height: 80 }}
+                                        resizeMode="contain"
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                        <Text className="text-white text-3xl font-bold mt-4">R3 FITNESS CENTER</Text>
                         <Text className="text-gray-400 text-lg">Comece sua jornada fitness</Text>
                     </View>
 

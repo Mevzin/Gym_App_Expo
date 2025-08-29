@@ -43,12 +43,32 @@ export default function Login() {
         <SafeAreaView className="flex-1 bg-primary">
             <View className="flex-1 justify-center items-center px-8">
                 <View className="w-full items-center mb-10">
-                    <Image
-                        source={require('../../../assets/icon.png')}
-                        style={{ width: 80, height: 80 }}
-                        resizeMode="contain"
-                    />
-                    <Text className="text-white text-3xl font-roboto-bold mt-4">FITNESS CENTER</Text>
+                    <View style={{
+                        borderRadius: 50,
+                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        padding: 3
+                    }}>
+                        <View style={{
+                            borderRadius: 47,
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            padding: 3
+                        }}>
+                            <View style={{
+                                borderRadius: 44,
+                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                padding: 4,
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                <Image
+                                    source={require('../../../assets/icon.png')}
+                                    style={{ width: 80, height: 80 }}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                        </View>
+                    </View>
+                    <Text className="text-white text-3xl font-roboto-bold mt-4">R3 FITNESS CENTER</Text>
                     <Text className="text-gray-400 text-lg font-roboto-regular">Seu parceiro de treino</Text>
                 </View>
 
