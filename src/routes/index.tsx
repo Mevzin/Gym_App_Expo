@@ -10,6 +10,7 @@ import Profile from '../screens/profile';
 import Login from '../screens/login';
 import Register from '../screens/register';
 import { WorkoutConfiguration } from '../screens/workoutConfiguration';
+import { EditWorkout } from '../screens/editWorkout';
 import SplashScreen from '../screens/splash';
 
 const Tab = createBottomTabNavigator();
@@ -95,6 +96,7 @@ function Routes() {
                 <Stack.Screen name="Register" component={Register} />
                 <Stack.Screen name="AppTabs" component={AppTabs} />
                 <Stack.Screen name="WorkoutConfiguration" component={WorkoutConfiguration} />
+                <Stack.Screen name="EditWorkout" component={EditWorkout} />
             </Stack.Navigator>
         </NavigationContainer>
     );

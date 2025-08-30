@@ -3,10 +3,9 @@ import CardProfile from "../../components/CardProfile";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ProgressBar from 'react-native-progress';
 import { useWindowDimensions } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { progressService, ProgressData } from '../../services/progressService';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
 
 
 export default function Progress() {

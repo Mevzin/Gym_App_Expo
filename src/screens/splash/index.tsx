@@ -1,45 +1,26 @@
 import React, { useEffect, useRef } from 'react';
-import { SafeAreaView, View, Text, Image, Animated, Dimensions } from 'react-native';
+import { SafeAreaView, View, Text, Image, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { authService } from '../../services/api';
 
-const { width } = Dimensions.get('window');
-
 export default function SplashScreen() {
     const navigation = useNavigation();
-    const slideAnim = useRef(new Animated.Value(0)).current;
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const fadeOutAnim = useRef(new Animated.Value(1)).current;
-    const logoScaleAnim = useRef(new Animated.Value(0.5)).current;
 
     useEffect(() => {
-        Animated.parallel([
-            Animated.timing(fadeAnim, {
-                toValue: 1,
-                duration: 1000,
-                useNativeDriver: true,
-            }),
-            Animated.spring(logoScaleAnim, {
-                toValue: 1,
-                tension: 50,
-                friction: 7,
-                useNativeDriver: true,
-            })
-        ]).start();
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+        }).start();
 
         const timer = setTimeout(() => {
-            Animated.parallel([
-                Animated.timing(slideAnim, {
-                    toValue: width,
-                    duration: 1500,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(fadeOutAnim, {
-                    toValue: 0,
-                    duration: 1500,
-                    useNativeDriver: true,
-                })
-            ]).start(() => {
+            Animated.timing(fadeOutAnim, {
+                toValue: 0,
+                duration: 1500,
+                useNativeDriver: true,
+            }).start(() => {
                 checkAuthAndNavigate();
             });
         }, 2000);
@@ -66,8 +47,7 @@ export default function SplashScreen() {
                 style={[
                     {
                         flex: 1,
-                        opacity: fadeOutAnim,
-                        transform: [{ translateX: slideAnim }]
+                        opacity: fadeOutAnim
                     }
                 ]}
             >
@@ -76,8 +56,7 @@ export default function SplashScreen() {
                     <Animated.View 
                         style={[
                             {
-                                opacity: fadeAnim,
-                                transform: [{ scale: logoScaleAnim }]
+                                opacity: fadeAnim
                             }
                         ]}
                         className="items-center"

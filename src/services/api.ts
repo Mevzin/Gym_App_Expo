@@ -50,8 +50,10 @@ export const authService = {
     
     logout: async () => {
         try {
-            await AsyncStorage.removeItem('@GymApp:token');
             await AsyncStorage.removeItem('@GymApp:user');
+        await AsyncStorage.removeItem('@GymApp:token');
+        
+        await AsyncStorage.removeItem('completed_exercises');
         } catch (error) {
             throw error;
         }
@@ -193,7 +195,7 @@ export const exerciseService = {
             }
 
             const response = await api.post('/files/getFileByUserId', { userId });
-            return response.data;
+            return response.data.file;
         } catch (error) {
             return null;
         }
@@ -214,6 +216,38 @@ export const exerciseService = {
                 throw new Error('Usuário não encontrado');
             }
             const response = await api.post('/files/createFile', {
+                userId,
+                ...exerciseData
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    updateFile: async (exerciseData: any) => {
+        try {
+            const userString = await AsyncStorage.getItem('@GymApp:user');
+            let userId = null;
+
+            if (userString) {
+                const user = JSON.parse(userString);
+                userId = user._id || user.id;
+            }
+
+            if (!userId) {
+                throw new Error('Usuário não encontrado');
+            }
+
+            let userFile = await exerciseService.checkUserFile();
+            
+            if (!userFile || !userFile._id) {
+                userFile = await exerciseService.createFile(exerciseData);
+                return userFile;
+            }
+
+            
+            const response = await api.put(`/files/updateFileById/${userFile._id}`, {
                 userId,
                 ...exerciseData
             });

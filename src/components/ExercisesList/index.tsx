@@ -48,10 +48,10 @@ export default function ExercisesList() {
     const checkUserFileAndLoadExercises = async (day: any) => {
         try {
             setLoading(true);
-            
+
             const userFile = await exerciseService.checkUserFile();
             setHasUserFile(!!userFile);
-            
+
             if (userFile) {
                 const response = await exerciseService.getExercisesByDay(day);
                 setExercises(response.exercises || []);
@@ -125,6 +125,7 @@ export default function ExercisesList() {
     const getDayTitle = () => {
         return 'Treino de hoje';
     };
+
 
     return (
         <View className="w-[95%]">

@@ -1,11 +1,10 @@
 import { Text, useWindowDimensions, View } from "react-native";
 import * as Progress from 'react-native-progress';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { exerciseService } from "../../services/api";
 import { getDayOfWeek } from "../../utils/dateUtils";
 import { useCompletedExercises } from "../../contexts/CompletedExercisesContext";
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
 import CardProgressTrainingSkeleton from "./skeleton";
 
 
@@ -118,6 +117,7 @@ export default function CardProgressTraining() {
 
     return (
         <View className="w-[95%] h-32 my-6 px-5 rounded-xl justify-center" style={{ backgroundColor: cardColor }}>
+            
             <View className="flex-row justify-between mb-5">
                 <View>
                     <Text className="text-white font-extrabold text-2xl">{dayTitle}</Text>

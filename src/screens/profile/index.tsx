@@ -232,6 +232,16 @@ export default function Profile() {
         
                         <View className="w-full mt-8 mb-6">
                             <TouchableOpacity 
+                                className="w-full bg-[#4abdd4] rounded-lg p-4 items-center mb-4"
+                                onPress={() => navigation.navigate('EditWorkout' as never)}
+                            >
+                                <View className="flex-row items-center">
+                                    <MaterialIcons name="edit" size={24} color="white" />
+                                    <Text className="text-white font-bold text-lg ml-2">Editar Treino</Text>
+                                </View>
+                            </TouchableOpacity>
+                            
+                            <TouchableOpacity 
                                 className="w-full bg-red-600 rounded-lg p-4 items-center"
                                 onPress={handleLogout}
                             >
