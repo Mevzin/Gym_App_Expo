@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Alert, TextInput } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { exerciseService } from '../../services/api';
 
@@ -23,6 +23,9 @@ export function EditWorkout() {
     const [selectedExercises, setSelectedExercises] = useState<{ [key: string]: Exercise[] }>({});
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeCategory, setActiveCategory] = useState('pernas');
+    const [showSelectedOnly, setShowSelectedOnly] = useState(false);
 
     useEffect(() => {
         initializeCategories();
@@ -134,10 +137,10 @@ export function EditWorkout() {
         try {
             setInitialLoading(true);
             const userFile = await exerciseService.checkUserFile();
-            
+
             if (userFile) {
                 const workoutData = userFile;
-                
+
                 const currentSelected: { [key: string]: Exercise[] } = {
                     pernas: [],
                     bracos: [],
@@ -158,11 +161,11 @@ export function EditWorkout() {
 
                 Object.entries(dayToCategory).forEach(([day, category]) => {
                     const dayExercises = workoutData[day] || [];
-                    
+
                     dayExercises.forEach((exerciseName: string) => {
                         const foundExercise = categories.find(cat => cat.name === category)
                             ?.exercises.find(ex => ex.name === exerciseName);
-                        
+
                         if (foundExercise) {
                             const sets = workoutData[exerciseName] || foundExercise.sets;
                             currentSelected[category].push({
@@ -211,7 +214,7 @@ export function EditWorkout() {
     const updateExerciseSets = (exerciseName: string, categoryName: string, newSets: string) => {
         setSelectedExercises(prev => {
             const categoryExercises = prev[categoryName] || [];
-            const updatedExercises = categoryExercises.map(exercise => 
+            const updatedExercises = categoryExercises.map(exercise =>
                 exercise.name === exerciseName ? { ...exercise, sets: newSets } : exercise
             );
 
@@ -234,6 +237,56 @@ export function EditWorkout() {
             };
         });
     };
+
+    const applyTemplate = (templateType: string) => {
+        const templates = {
+            'push-pull-legs': {
+                pernas: ['agachamentoLivre', 'legPress', 'cadeiraExtensora', 'stiff'],
+                peito: ['supinoReto', 'supinoInclinado', 'crucifixoReto'],
+                ombros: ['desenvolvimentoHalteres', 'elevacaoLateral'],
+                bracos: ['roscaDireta', 'tricepsTesta'],
+                costas: ['puxadaAlta', 'remadaCurvada', 'barraFixa'],
+                abdomen: ['abdominalSupra', 'prancha']
+            },
+            'upper-lower': {
+                peito: ['supinoReto', 'crucifixoReto'],
+                costas: ['puxadaAlta', 'remadaCurvada'],
+                ombros: ['desenvolvimentoHalteres', 'elevacaoLateral'],
+                bracos: ['roscaDireta', 'tricepsTesta'],
+                pernas: ['agachamentoLivre', 'legPress', 'stiff', 'cadeiraExtensora'],
+                abdomen: ['abdominalSupra', 'prancha']
+            },
+            'full-body': {
+                pernas: ['agachamentoLivre', 'legPress'],
+                peito: ['supinoReto'],
+                costas: ['puxadaAlta'],
+                ombros: ['desenvolvimentoHalteres'],
+                bracos: ['roscaDireta'],
+                abdomen: ['abdominalSupra']
+            }
+        };
+
+        const template = templates[templateType as keyof typeof templates];
+        if (template) {
+            const newSelected: { [key: string]: Exercise[] } = {};
+
+            Object.entries(template).forEach(([categoryName, exerciseNames]) => {
+                const category = categories.find(cat => cat.name === categoryName);
+                if (category) {
+                    newSelected[categoryName] = exerciseNames.map(exerciseName => {
+                        const exercise = category.exercises.find(ex => ex.name === exerciseName);
+                        return exercise || { name: exerciseName, displayName: exerciseName, category: categoryName, sets: '3x 12' };
+                    }).filter(Boolean);
+                }
+            });
+
+            setSelectedExercises(newSelected);
+        }
+    };
+
+    const filteredExercises = categories.find(cat => cat.name === activeCategory)?.exercises.filter(exercise =>
+        exercise.displayName.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
 
     const saveWorkoutConfiguration = async () => {
         try {
@@ -288,9 +341,8 @@ export function EditWorkout() {
                             return (
                                 <TouchableOpacity
                                     key={exercise.name}
-                                    className={`m-1 px-3 py-2 rounded-full ${
-                                        isSelected ? 'bg-[#4abdd4]' : 'bg-gray-600'
-                                    }`}
+                                    className={`m-1 px-3 py-2 rounded-full ${isSelected ? 'bg-[#4abdd4]' : 'bg-gray-600'
+                                        }`}
                                     onPress={() => toggleExerciseSelection(exercise, category.name)}
                                 >
                                     <Text className="text-white text-sm">{exercise.displayName}</Text>
@@ -364,39 +416,158 @@ export function EditWorkout() {
     }
 
     return (
-        <View className="flex-1 bg-[#1a1a1a]">
-            <View className="flex-row items-center justify-between p-4 pt-12 bg-[#2a2a2a]">
+        <View className="flex-1 bg-primary">
+            <View className="flex-row items-center justify-between p-4 pt-5 bg-primary">
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Feather name="arrow-left" size={24} color="white" />
                 </TouchableOpacity>
                 <Text className="text-white text-lg font-bold">Editar Treino</Text>
-                <View className="w-6" />
-            </View>
-
-            <ScrollView className="flex-1 p-4">
-                <Text className="text-white/70 text-sm mb-6 text-center">
-                    Edite os exercícios para cada categoria e organize a sequência como desejar.
-                    {getTotalSelectedExercises() > 0 && ` (${getTotalSelectedExercises()} exercícios selecionados)`}
-                </Text>
-
-                {categories.map(renderCategory)}
-
                 <TouchableOpacity
-                    className={`mt-6 mb-8 py-4 px-6 rounded-full flex-row items-center justify-center ${
-                        getTotalSelectedExercises() > 0 ? 'bg-[#4abdd4]' : 'bg-gray-600'
-                    }`}
+                    className="bg-red-600 px-4 py-2 rounded-lg"
                     onPress={saveWorkoutConfiguration}
                     disabled={loading || getTotalSelectedExercises() === 0}
                 >
-                    {loading ? (
-                        <Text className="text-white font-bold">Salvando...</Text>
-                    ) : (
-                        <>
-                            <Feather name="save" size={20} color="white" />
-                            <Text className="text-white font-bold ml-2">Salvar Alterações</Text>
-                        </>
-                    )}
+                    <Text className="text-white font-bold text-sm">
+                        {loading ? 'Salvando...' : 'Salvar'}
+                    </Text>
                 </TouchableOpacity>
+            </View>
+
+            <ScrollView className="flex-1">
+                <View className="p-4">
+                    <View className="bg-gray-700 rounded-lg flex-row items-center px-4 py-3">
+                        <Feather name="search" size={20} color="#9CA3AF" />
+                        <TextInput
+                            className="flex-1 text-white ml-3"
+                            placeholder="Buscar exercícios..."
+                            placeholderTextColor="#9CA3AF"
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                        />
+                    </View>
+                </View>
+
+                <View className="px-4 mb-4">
+                    <Text className="text-white text-lg font-bold mb-3">Templates Rápidos</Text>
+                    <View className="flex-row space-x-3 justify-between">
+                        <TouchableOpacity
+                            className="bg-red-600 px-4 py-2 rounded-lg"
+                            onPress={() => applyTemplate('push-pull-legs')}
+                        >
+                            <Text className="text-white font-bold text-sm">Push/Pull/Legs</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            className="bg-gray-600 px-4 py-2 rounded-lg"
+                            onPress={() => applyTemplate('upper-lower')}
+                        >
+                            <Text className="text-white font-bold text-sm">Upper/Lower</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            className="bg-gray-600 px-4 py-2 rounded-lg"
+                            onPress={() => applyTemplate('full-body')}
+                        >
+                            <Text className="text-white font-bold text-sm">Full Body</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <View className="px-4 mb-4">
+                    <Text className="text-white text-lg font-bold mb-3">Categorias</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        <View className="flex-row space-x-2 gap-2">
+                            {categories.map(category => (
+                                <TouchableOpacity
+                                    key={category.name}
+                                    className={`px-4 py-2 rounded-lg ${activeCategory === category.name ? 'bg-red-600' : 'bg-gray-600'
+                                        }`}
+                                    onPress={() => setActiveCategory(category.name)}
+                                >
+                                    <Text className="text-white font-medium text-sm">
+                                        {category.displayName}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </ScrollView>
+                </View>
+
+                <View className="px-4 mb-4">
+                    <Text className="text-white text-lg font-bold mb-3">Exercícios Disponíveis</Text>
+                    <View className="flex-row flex-wrap">
+                        {filteredExercises.map(exercise => {
+                            const isSelected = (selectedExercises[activeCategory] || []).some(ex => ex.name === exercise.name);
+                            return (
+                                <TouchableOpacity
+                                    key={exercise.name}
+                                    className={`m-1 px-3 py-2 rounded-lg ${isSelected ? 'bg-red-600' : 'bg-gray-600'
+                                        }`}
+                                    onPress={() => toggleExerciseSelection(exercise, activeCategory)}
+                                >
+                                    <Text className="text-white text-sm">{exercise.displayName}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+                </View>
+
+                {(selectedExercises[activeCategory] || []).length > 0 && (
+                    <View className="px-4 mb-4">
+                        <View className="flex-row items-center justify-between mb-3">
+                            <Text className="text-white text-lg font-bold">Exercícios Selecionados</Text>
+                            <Text className="text-[#4abdd4] text-sm">
+                                {(selectedExercises[activeCategory] || []).length} exercícios
+                            </Text>
+                        </View>
+                        {(selectedExercises[activeCategory] || []).map((exercise, index) => (
+                            <View key={exercise.name} className="bg-gray-700 p-3 mb-2 rounded-lg flex-row items-center">
+                                <MaterialIcons name="drag-handle" size={20} color="#9CA3AF" />
+                                <View className="flex-1 ml-3">
+                                    <Text className="text-white font-medium">{exercise.displayName}</Text>
+                                    <View className="flex-row items-center mt-2">
+                                        <Text className="text-white/70 text-sm mr-2">Séries x Reps:</Text>
+                                        <TextInput
+                                            className="bg-gray-600 text-white px-2 py-1 rounded text-sm flex-1"
+                                            value={exercise.sets}
+                                            onChangeText={(text) => updateExerciseSets(exercise.name, activeCategory, text)}
+                                            placeholder="3x 12"
+                                            placeholderTextColor="#9CA3AF"
+                                        />
+                                    </View>
+                                </View>
+                                <TouchableOpacity
+                                    className="p-2"
+                                    onPress={() => toggleExerciseSelection(exercise, activeCategory)}
+                                >
+                                    <Feather name="x" size={16} color="#ef4444" />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                )}
+
+                <View className="px-4 mb-8">
+                    <Text className="text-white text-lg font-bold mb-3">Preview Semanal</Text>
+                    <View className="space-y-2 gap-2">
+                        {[
+                            { day: 'Segunda-feira', category: 'pernas', displayName: 'Pernas' },
+                            { day: 'Terça-feira', category: 'bracos', displayName: 'Braços' },
+                            { day: 'Quarta-feira', category: 'costas', displayName: 'Costas' },
+                            { day: 'Quinta-feira', category: 'peito', displayName: 'Peito' },
+                            { day: 'Sexta-feira', category: 'ombros', displayName: 'Ombros' },
+                            { day: 'Sábado', category: 'abdomen', displayName: 'Abdômen' }
+                        ].map(({ day, category, displayName }) => {
+                            const dayExercises = selectedExercises[category] || [];
+                            return (
+                                <View key={day} className="bg-gray-700 p-3 rounded-lg flex-row items-center justify-between">
+                                    <Text className="text-white font-medium">{day}</Text>
+                                    <Text className="text-[#4abdd4] text-sm">
+                                        {dayExercises.length > 0 ? `${displayName} - ${dayExercises.length} exercícios` : 'Não configurado'}
+                                    </Text>
+                                </View>
+                            );
+                        })}
+                    </View>
+                </View>
             </ScrollView>
         </View>
     );
