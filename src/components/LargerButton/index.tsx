@@ -22,8 +22,8 @@ export default function LargeButton({ color, description, title, icon }: ILargeB
                     />
                 </View>
                 <View>
-                    <Text className="text-white font-extrabold tracking-tighter text-lg">{title}</Text>
-                    <Text className="text-gray-500 font-extrabold tracking-tighter text-base w-[80%]">{description}</Text>
+                    <Text className="text-white font-extrabold tracking-tighter text-lg font-roboto">{title}</Text>
+                    <Text className="text-gray-500 font-extrabold tracking-tighter text-base w-[80%] font-roboto">{description}</Text>
                 </View>
             </Button>
         )
@@ -38,8 +38,8 @@ export default function LargeButton({ color, description, title, icon }: ILargeB
                     />
                 </View>
                 <View>
-                    <Text className="text-white font-extrabold tracking-tighter text-lg">{title}</Text>
-                    <Text className="text-gray-500 font-extrabold tracking-tighter text-base w-[80%]">{description}</Text>
+                    <Text className="text-white font-extrabold tracking-tighter text-lg font-roboto">{title}</Text>
+                    <Text className="text-gray-500 font-extrabold tracking-tighter text-base w-[80%] font-roboto">{description}</Text>
                 </View>
             </Button>
         )

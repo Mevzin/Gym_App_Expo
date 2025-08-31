@@ -44,9 +44,9 @@ export default function CardProfile() {
                 />
 
                 <View className="flex-1 justify-center ml-3">
-                    <Text className="text-sm text-gray-400 font-bold">Bem vindo</Text>
-                    <Text className="text-xl text-gray-50 font-bold mt-[-5px]">{userName}</Text>
-                    <Text className="text-sm text-gray-400 font-bold mt-[-5px]">{currentDate}</Text>
+                    <Text className="text-sm text-gray-400 font-bold font-roboto">Bem vindo</Text>
+                    <Text className="text-xl text-gray-50 font-bold mt-[-5px] font-roboto">{userName}</Text>
+                    <Text className="text-sm text-gray-400 font-bold mt-[-5px] font-roboto">{currentDate}</Text>
                 </View>
             </View>
             <View className="my-auto">

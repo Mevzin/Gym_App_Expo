@@ -4,7 +4,7 @@ import LargeButton from "../LargerButton";
 export default function FeatureFeed() {
     return (
         <View className="w-[95%]">
-            <Text className="text-white text-2xl font-extrabold">
+            <Text className="text-white text-2xl font-extrabold font-roboto">
                 Features
             </Text>
             <View className="flex items-center">

@@ -82,12 +82,12 @@ export default function Register() {
                                 </View>
                             </View>
                         </View>
-                        <Text className="text-white text-3xl font-bold mt-4">R3 FITNESS CENTER</Text>
-                        <Text className="text-gray-400 text-lg">Comece sua jornada fitness</Text>
+                        <Text className="text-white text-3xl font-bold mt-4 font-roboto">R3 FITNESS CENTER</Text>
+                        <Text className="text-gray-400 text-lg font-roboto">Comece sua jornada fitness</Text>
                     </View>
 
                     <View className="w-full mb-4">
-                        <Text className="text-white text-lg font-bold mb-2">Nome</Text>
+                        <Text className="text-white text-lg font-bold mb-2 font-roboto">Nome</Text>
                         <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
                             <FontAwesome name="user" size={20} color="#9ba1ad" />
                             <TextInput
@@ -101,7 +101,7 @@ export default function Register() {
                     </View>
 
                     <View className="w-full mb-4">
-                        <Text className="text-white text-lg font-bold mb-2">Email</Text>
+                        <Text className="text-white text-lg font-bold mb-2 font-roboto">Email</Text>
                         <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
                             <FontAwesome name="envelope-o" size={20} color="#9ba1ad" />
                             <TextInput
@@ -117,7 +117,7 @@ export default function Register() {
                     </View>
 
                     <View className="w-full mb-4">
-                        <Text className="text-white text-lg font-bold mb-2">Nome de usuário</Text>
+                        <Text className="text-white text-lg font-bold mb-2 font-roboto">Nome de usuário</Text>
                         <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
                             <FontAwesome name="at" size={20} color="#9ba1ad" />
                             <TextInput
@@ -132,7 +132,7 @@ export default function Register() {
                     </View>
 
                     <View className="w-full mb-4">
-                        <Text className="text-white text-lg font-bold mb-2">Senha</Text>
+                        <Text className="text-white text-lg font-bold mb-2 font-roboto">Senha</Text>
                         <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
                             <FontAwesome name="lock" size={20} color="#9ba1ad" />
                             <TextInput
@@ -147,7 +147,7 @@ export default function Register() {
                     </View>
 
                     <View className="w-full mb-4">
-                        <Text className="text-white text-lg font-bold mb-2">Confirmar Senha</Text>
+                        <Text className="text-white text-lg font-bold mb-2 font-roboto">Confirmar Senha</Text>
                         <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
                             <FontAwesome name="lock" size={20} color="#9ba1ad" />
                             <TextInput
@@ -163,7 +163,7 @@ export default function Register() {
 
                     <View className="w-full flex-row justify-between mb-4">
                         <View className="w-[48%]">
-                            <Text className="text-white text-lg font-bold mb-2">Peso (kg)</Text>
+                            <Text className="text-white text-lg font-bold mb-2 font-roboto">Peso (kg)</Text>
                             <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
                                 <MaterialCommunityIcons name="weight-kilogram" size={20} color="#9ba1ad" />
                                 <TextInput
@@ -177,7 +177,7 @@ export default function Register() {
                             </View>
                         </View>
                         <View className="w-[48%]">
-                            <Text className="text-white text-lg font-bold mb-2">Idade</Text>
+                            <Text className="text-white text-lg font-bold mb-2 font-roboto">Idade</Text>
                             <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
                                 <FontAwesome name="calendar" size={20} color="#9ba1ad" />
                                 <TextInput
@@ -198,16 +198,16 @@ export default function Register() {
                         onPress={handleRegister}
                     >
                         {isLoading ? (
-                            <Text className="text-white font-bold text-lg">Carregando...</Text>
+                            <Text className="text-white font-bold text-lg font-roboto">Carregando...</Text>
                         ) : (
-                            <Text className="text-white font-bold text-lg">CRIAR CONTA</Text>
+                            <Text className="text-white font-bold text-lg font-roboto">CRIAR CONTA</Text>
                         )}
                     </Button>
 
                     <View className="flex-row mt-6 mb-4">
-                        <Text className="text-gray-400">Já tem uma conta? </Text>
+                        <Text className="text-gray-400 font-roboto">Já tem uma conta? </Text>
                         <TouchableOpacity onPress={() => navigation.navigate('Login' as never)}>
-                            <Text className="text-cyan-400 font-bold">Faça login</Text>
+                            <Text className="text-cyan-400 font-bold font-roboto">Faça login</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

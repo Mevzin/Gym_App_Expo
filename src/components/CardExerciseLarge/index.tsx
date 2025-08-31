@@ -45,8 +45,8 @@ export default function CardExerciseLarge({ name, value, isFinished: initialIsFi
                         />
                     </View>
                     <View>
-                        <Text className="text-white/30 font-bold text-2xl">{getExerciseName(name)}</Text>
-                        <Text className="text-white/30 font-extralight">{value?.trim() || value}</Text>
+                        <Text className="text-white/30 font-bold text-2xl font-roboto">{getExerciseName(name)}</Text>
+                        <Text className="text-white/30 font-extralight font-roboto">{value?.trim() || value}</Text>
                     </View>
                 </View>
                 <View>
@@ -70,8 +70,8 @@ export default function CardExerciseLarge({ name, value, isFinished: initialIsFi
                         />
                     </View>
                     <View>
-                        <Text className="text-white font-bold text-2xl">{getExerciseName(name)}</Text>
-                        <Text className="text-white font-extralight">{value?.trim() || value}</Text>
+                        <Text className="text-white font-bold text-2xl font-roboto">{getExerciseName(name)}</Text>
+                        <Text className="text-white font-extralight font-roboto">{value?.trim() || value}</Text>
                     </View>
                 </View>
                 <View>

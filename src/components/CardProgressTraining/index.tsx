@@ -81,12 +81,12 @@ export default function CardProgressTraining() {
             <View className="w-[95%] h-32 bg-[#4abdd4] my-6 px-5 rounded-xl justify-center">
                 <View className="flex-row justify-between mb-5">
                     <View>
-                        <Text className="text-white font-extrabold text-2xl">{dayTitle}</Text>
-                        <Text className="text-white font-extralight">Dia de descanso</Text>
+                        <Text className="text-white font-extrabold text-2xl font-roboto">{dayTitle}</Text>
+                        <Text className="text-white font-extralight font-roboto">Dia de descanso</Text>
                     </View>
                     <View className="items-end">
-                        <Text className="text-white font-extrabold text-3xl">😴</Text>
-                        <Text className="text-white font-extralight">rest day</Text>
+                        <Text className="text-white font-extrabold text-3xl font-roboto">😴</Text>
+                        <Text className="text-white font-extralight font-roboto">rest day</Text>
                     </View>
                 </View>
                 <Progress.Bar progress={1} width={340} animated={true} color="#ffffff" borderColor="gray" borderWidth={0.2} height={10} />
@@ -99,12 +99,12 @@ export default function CardProgressTraining() {
             <View className="w-[95%] h-32 bg-[#697f84] my-6 px-5 rounded-xl justify-center">
                 <View className="flex-row justify-between mb-5">
                     <View>
-                        <Text className="text-white font-extrabold text-2xl">{dayTitle}</Text>
-                        <Text className="text-white font-extralight">Nenhum exercício configurado</Text>
+                        <Text className="text-white font-extrabold text-2xl font-roboto">{dayTitle}</Text>
+                        <Text className="text-white font-extralight font-roboto">Nenhum exercício configurado</Text>
                     </View>
                     <View className="items-end">
-                        <Text className="text-white font-extrabold text-3xl">0/0</Text>
-                        <Text className="text-white font-extralight">completed</Text>
+                        <Text className="text-white font-extrabold text-3xl font-roboto">0/0</Text>
+                        <Text className="text-white font-extralight font-roboto">completed</Text>
                     </View>
                 </View>
                 <Progress.Bar progress={0} width={340} animated={true} color="#4abdd4" borderColor="gray" borderWidth={0.2} height={10} />
@@ -120,13 +120,13 @@ export default function CardProgressTraining() {
             
             <View className="flex-row justify-between mb-5">
                 <View>
-                    <Text className="text-white font-extrabold text-2xl">{dayTitle}</Text>
-                    <Text className="text-white font-extralight">{totalExercises} exercícios - {estimatedTime} min</Text>
+                    <Text className="text-white font-extrabold text-2xl font-roboto">{dayTitle}</Text>
+                    <Text className="text-white font-extralight font-roboto">{totalExercises} exercícios - {estimatedTime} min</Text>
                 </View>
 
                 <View className="items-end">
-                    <Text className="text-white font-extrabold text-3xl">{completedCount}/{totalExercises}</Text>
-                    <Text className="text-white font-extralight">completed</Text>
+                    <Text className="text-white font-extrabold text-3xl font-roboto">{completedCount}/{totalExercises}</Text>
+                    <Text className="text-white font-extralight font-roboto">completed</Text>
                 </View>
             </View>
             <Progress.Bar

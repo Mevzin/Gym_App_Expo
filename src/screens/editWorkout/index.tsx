@@ -331,10 +331,10 @@ export function EditWorkout() {
 
         return (
             <View key={category.name} className="mb-6">
-                <Text className="text-white text-xl font-bold mb-4">{category.displayName}</Text>
+                <Text className="text-white text-xl font-bold mb-4 font-roboto">{category.displayName}</Text>
 
                 <View className="mb-4">
-                    <Text className="text-white/70 text-sm mb-2">Exercícios Disponíveis:</Text>
+                    <Text className="text-white/70 text-sm mb-2 font-roboto">Exercícios Disponíveis:</Text>
                     <View className="flex-row flex-wrap">
                         {category.exercises.map(exercise => {
                             const isSelected = selectedInCategory.some(ex => ex.name === exercise.name);
@@ -345,7 +345,7 @@ export function EditWorkout() {
                                         }`}
                                     onPress={() => toggleExerciseSelection(exercise, category.name)}
                                 >
-                                    <Text className="text-white text-sm">{exercise.displayName}</Text>
+                                    <Text className="text-white text-sm font-roboto">{exercise.displayName}</Text>
                                 </TouchableOpacity>
                             );
                         })}
@@ -354,13 +354,13 @@ export function EditWorkout() {
 
                 {selectedInCategory.length > 0 && (
                     <View>
-                        <Text className="text-white/70 text-sm mb-2">Exercícios Selecionados:</Text>
+                        <Text className="text-white/70 text-sm mb-2 font-roboto">Exercícios Selecionados:</Text>
                         {selectedInCategory.map((exercise, index) => (
                             <View key={exercise.name} className="bg-gray-700 p-3 mb-2 rounded-lg flex-row items-center">
                                 <View className="flex-1">
-                                    <Text className="text-white font-medium">{exercise.displayName}</Text>
+                                    <Text className="text-white font-medium font-roboto">{exercise.displayName}</Text>
                                     <View className="flex-row items-center mt-2">
-                                        <Text className="text-white/70 text-sm mr-2">Séries x Reps:</Text>
+                                        <Text className="text-white/70 text-sm mr-2 font-roboto">Séries x Reps:</Text>
                                         <TextInput
                                             className="bg-gray-600 text-white px-2 py-1 rounded text-sm flex-1"
                                             value={exercise.sets}
@@ -410,7 +410,7 @@ export function EditWorkout() {
     if (initialLoading) {
         return (
             <View className="flex-1 bg-[#1a1a1a] justify-center items-center">
-                <Text className="text-white text-lg">Carregando treino atual...</Text>
+                <Text className="text-white text-lg font-roboto">Carregando treino atual...</Text>
             </View>
         );
     }
@@ -421,13 +421,13 @@ export function EditWorkout() {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Feather name="arrow-left" size={24} color="white" />
                 </TouchableOpacity>
-                <Text className="text-white text-lg font-bold">Editar Treino</Text>
+                <Text className="text-white text-lg font-bold font-roboto">Editar Treino</Text>
                 <TouchableOpacity
                     className="bg-red-600 px-4 py-2 rounded-lg"
                     onPress={saveWorkoutConfiguration}
                     disabled={loading || getTotalSelectedExercises() === 0}
                 >
-                    <Text className="text-white font-bold text-sm">
+                    <Text className="text-white font-bold text-sm font-roboto">
                         {loading ? 'Salvando...' : 'Salvar'}
                     </Text>
                 </TouchableOpacity>
@@ -448,31 +448,31 @@ export function EditWorkout() {
                 </View>
 
                 <View className="px-4 mb-4">
-                    <Text className="text-white text-lg font-bold mb-3">Templates Rápidos</Text>
+                    <Text className="text-white text-lg font-bold mb-3 font-roboto">Templates Rápidos</Text>
                     <View className="flex-row space-x-3 justify-between">
                         <TouchableOpacity
                             className="bg-red-600 px-4 py-2 rounded-lg"
                             onPress={() => applyTemplate('push-pull-legs')}
                         >
-                            <Text className="text-white font-bold text-sm">Push/Pull/Legs</Text>
+                            <Text className="text-white font-bold text-sm font-roboto">Push/Pull/Legs</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             className="bg-gray-600 px-4 py-2 rounded-lg"
                             onPress={() => applyTemplate('upper-lower')}
                         >
-                            <Text className="text-white font-bold text-sm">Upper/Lower</Text>
+                            <Text className="text-white font-bold text-sm font-roboto">Upper/Lower</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             className="bg-gray-600 px-4 py-2 rounded-lg"
                             onPress={() => applyTemplate('full-body')}
                         >
-                            <Text className="text-white font-bold text-sm">Full Body</Text>
+                            <Text className="text-white font-bold text-sm font-roboto">Full Body</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 <View className="px-4 mb-4">
-                    <Text className="text-white text-lg font-bold mb-3">Categorias</Text>
+                    <Text className="text-white text-lg font-bold mb-3 font-roboto">Categorias</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                         <View className="flex-row space-x-2 gap-2">
                             {categories.map(category => (
@@ -482,7 +482,7 @@ export function EditWorkout() {
                                         }`}
                                     onPress={() => setActiveCategory(category.name)}
                                 >
-                                    <Text className="text-white font-medium text-sm">
+                                    <Text className="text-white font-medium text-sm font-roboto">
                                         {category.displayName}
                                     </Text>
                                 </TouchableOpacity>
@@ -492,7 +492,7 @@ export function EditWorkout() {
                 </View>
 
                 <View className="px-4 mb-4">
-                    <Text className="text-white text-lg font-bold mb-3">Exercícios Disponíveis</Text>
+                    <Text className="text-white text-lg font-bold mb-3 font-roboto">Exercícios Disponíveis</Text>
                     <View className="flex-row flex-wrap">
                         {filteredExercises.map(exercise => {
                             const isSelected = (selectedExercises[activeCategory] || []).some(ex => ex.name === exercise.name);
@@ -503,7 +503,7 @@ export function EditWorkout() {
                                         }`}
                                     onPress={() => toggleExerciseSelection(exercise, activeCategory)}
                                 >
-                                    <Text className="text-white text-sm">{exercise.displayName}</Text>
+                                    <Text className="text-white text-sm font-roboto">{exercise.displayName}</Text>
                                 </TouchableOpacity>
                             );
                         })}
@@ -513,8 +513,8 @@ export function EditWorkout() {
                 {(selectedExercises[activeCategory] || []).length > 0 && (
                     <View className="px-4 mb-4">
                         <View className="flex-row items-center justify-between mb-3">
-                            <Text className="text-white text-lg font-bold">Exercícios Selecionados</Text>
-                            <Text className="text-[#4abdd4] text-sm">
+                            <Text className="text-white text-lg font-bold font-roboto">Exercícios Selecionados</Text>
+                            <Text className="text-[#4abdd4] text-sm font-roboto">
                                 {(selectedExercises[activeCategory] || []).length} exercícios
                             </Text>
                         </View>
@@ -522,9 +522,9 @@ export function EditWorkout() {
                             <View key={exercise.name} className="bg-gray-700 p-3 mb-2 rounded-lg flex-row items-center">
                                 <MaterialIcons name="drag-handle" size={20} color="#9CA3AF" />
                                 <View className="flex-1 ml-3">
-                                    <Text className="text-white font-medium">{exercise.displayName}</Text>
+                                    <Text className="text-white font-medium font-roboto">{exercise.displayName}</Text>
                                     <View className="flex-row items-center mt-2">
-                                        <Text className="text-white/70 text-sm mr-2">Séries x Reps:</Text>
+                                        <Text className="text-white/70 text-sm mr-2 font-roboto">Séries x Reps:</Text>
                                         <TextInput
                                             className="bg-gray-600 text-white px-2 py-1 rounded text-sm flex-1"
                                             value={exercise.sets}
@@ -546,7 +546,7 @@ export function EditWorkout() {
                 )}
 
                 <View className="px-4 mb-8">
-                    <Text className="text-white text-lg font-bold mb-3">Preview Semanal</Text>
+                    <Text className="text-white text-lg font-bold mb-3 font-roboto">Preview Semanal</Text>
                     <View className="space-y-2 gap-2">
                         {[
                             { day: 'Segunda-feira', category: 'pernas', displayName: 'Pernas' },
@@ -559,8 +559,8 @@ export function EditWorkout() {
                             const dayExercises = selectedExercises[category] || [];
                             return (
                                 <View key={day} className="bg-gray-700 p-3 rounded-lg flex-row items-center justify-between">
-                                    <Text className="text-white font-medium">{day}</Text>
-                                    <Text className="text-[#4abdd4] text-sm">
+                                    <Text className="text-white font-medium font-roboto">{day}</Text>
+                                    <Text className="text-[#4abdd4] text-sm font-roboto">
                                         {dayExercises.length > 0 ? `${displayName} - ${dayExercises.length} exercícios` : 'Não configurado'}
                                     </Text>
                                 </View>
