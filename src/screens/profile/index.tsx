@@ -19,14 +19,20 @@ export default function Profile() {
     const loadUserData = async () => {
         try {
             setLoading(true);
-            const user = await authService.getCurrentUserFromServer();
-            setUserData(user);
-        } catch (error) {
-            console.error('Erro ao carregar dados do usuário:', error);
-    
+            // Primeiro carrega dados locais para evitar tela branca
             const localUser = await authService.getCurrentUser();
             setUserData(localUser);
-        } finally {
+            setLoading(false);
+            
+            // Depois tenta atualizar com dados do servidor em background
+            try {
+                const serverUser = await authService.getCurrentUserFromServer();
+                setUserData(serverUser);
+            } catch (serverError) {
+                console.log('Usando dados locais - servidor indisponível');
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados do usuário:', error);
             setLoading(false);
         }
     };
