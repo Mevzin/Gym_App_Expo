@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { exerciseService } from '../../services/api';
 import { logger } from '../../utils/logger';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../types/navigation';
+import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface Exercise {
     name: string;
@@ -18,8 +22,13 @@ interface ExerciseCategory {
     exercises: Exercise[];
 }
 
+type EditWorkoutRouteProp = RouteProp<RootStackParamList, 'EditWorkout'>;
+
 export function EditWorkout() {
     const navigation = useNavigation();
+    const route = useRoute<EditWorkoutRouteProp>();
+    const { user } = route.params || {};
+    const { token } = useAuth();
     const [categories, setCategories] = useState<ExerciseCategory[]>([]);
     const [selectedExercises, setSelectedExercises] = useState<{ [key: string]: Exercise[] }>({});
     const [loading, setLoading] = useState(false);
@@ -137,7 +146,22 @@ export function EditWorkout() {
     const loadCurrentWorkout = async () => {
         try {
             setInitialLoading(true);
-            const userFile = await exerciseService.checkUserFile();
+            let userFile;
+            
+            if (user) {
+                 if (user.fileId) {
+                    const response = await api.get(`/files/getFileById/${user.fileId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    userFile = response.data.file;
+                } else {
+                     userFile = null;
+                 }
+             } else {
+                 userFile = await exerciseService.checkUserFile();
+            }
 
             if (userFile) {
                 const workoutData = userFile;
@@ -308,10 +332,42 @@ export function EditWorkout() {
                 exerciseData[exercise.name] = exercise.sets;
             });
 
-            await exerciseService.updateFile({
+            const finalData = {
                 ...weeklyPlan,
                 ...exerciseData
-            });
+            };
+
+            if (user) {
+                 if (user.fileId) {
+                    await api.put(`/files/updateFileById/${user.fileId}`, {
+                        userId: user.id,
+                        ...finalData
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                } else {
+                     const response = await api.post('/files/createFile', {
+                        userId: user.id,
+                        ...finalData
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                     
+                     await api.patch(`/user/update-workout/${user.id}`, {
+                        fileId: response.data.file._id
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                }
+             } else {
+                 await exerciseService.updateFile(finalData);
+            }
 
             Alert.alert('Sucesso', 'Treino atualizado com sucesso!', [
                 {

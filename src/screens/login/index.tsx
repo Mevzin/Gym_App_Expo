@@ -3,16 +3,16 @@ import { SafeAreaView, Text, View, TextInput, TouchableOpacity, Alert, Image } f
 import { FontAwesome } from '@expo/vector-icons';
 import Button from '../../components/ui/button';
 import { useNavigation } from '@react-navigation/native';
-import { authService } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 import { validateEmail, validateRequired } from '../../utils/validation';
 
 export default function Login() {
+    const navigation = useNavigation();
+    const { login, isLoading } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const navigation = useNavigation();
 
     const validateForm = () => {
         let isValid = true;
@@ -42,20 +42,10 @@ export default function Login() {
             return;
         }
 
-        setIsLoading(true);
-
         try {
-    
-            const response = await authService.login(email, password);
-
-            if (response.token) {
-                setIsLoading(false);
-                navigation.navigate('AppTabs' as never);
-            } else {
-                throw new Error('Falha na autenticação');
-            }
+            await login(email, password);
+            navigation.navigate('AppTabs' as never);
         } catch (error) {
-            setIsLoading(false);
             Alert.alert('Erro', 'Falha ao fazer login. Verifique suas credenciais.');
         }
     };

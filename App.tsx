@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import "./global.css"
 import Routes from './src/routes';
+import { AuthProvider } from './src/contexts/AuthContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -27,9 +28,11 @@ export default function App() {
   }
 
   return (
-    <View className={`flex-1 ${Platform.OS === 'ios' ? 'pt-14' : 'pt-10'} bg-primary`}>
-      <StatusBar style="light" />
-      <Routes />
-    </View>
+    <AuthProvider>
+      <View className={`flex-1 ${Platform.OS === 'ios' ? 'pt-14' : 'pt-10'} bg-primary`}>
+        <StatusBar style="light" />
+        <Routes />
+      </View>
+    </AuthProvider>
   );
 }

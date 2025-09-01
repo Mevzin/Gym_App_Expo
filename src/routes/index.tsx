@@ -12,9 +12,13 @@ import Register from '../screens/register';
 import { WorkoutConfiguration } from '../screens/workoutConfiguration';
 import { EditWorkout } from '../screens/editWorkout';
 import SplashScreen from '../screens/splash';
+import PersonalDashboard from '../screens/personalDashboard';
+import EditUserWorkout from '../screens/editUserWorkout';
+import UserWorkoutDetails from '../screens/userWorkoutDetails';
+import { RootStackParamList } from '../types/navigation';
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 function AppTabs() {
     return (
@@ -104,6 +108,9 @@ function Routes() {
                 <Stack.Screen name="AppTabs" component={AppTabs} />
                 <Stack.Screen name="WorkoutConfiguration" component={WorkoutConfiguration} />
                 <Stack.Screen name="EditWorkout" component={EditWorkout} />
+                <Stack.Screen name="PersonalDashboard" component={PersonalDashboard} />
+                <Stack.Screen name="EditUserWorkout" component={EditUserWorkout} />
+                <Stack.Screen name="UserWorkoutDetails" component={UserWorkoutDetails} />
             </Stack.Navigator>
         </NavigationContainer>
     );

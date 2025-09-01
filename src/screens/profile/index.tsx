@@ -3,6 +3,7 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { useWindowDimensions } from 'react-native';
 import { useState, useEffect } from 'react';
 import Button from "../../components/ui/button";
+import { useAuth } from "../../contexts/AuthContext";
 import { authService } from "../../services/api";
 import { useNavigation } from '@react-navigation/native';
 
@@ -10,6 +11,7 @@ import { logger } from '../../utils/logger';
 
 export default function Profile() {
     const { width } = useWindowDimensions();
+    const { user, logout } = useAuth();
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
@@ -21,8 +23,12 @@ export default function Profile() {
     const loadUserData = async () => {
         try {
             setLoading(true);
-            const localUser = await authService.getCurrentUser();
-            setUserData(localUser);
+            if (user) {
+                setUserData(user);
+            } else {
+                const localUser = await authService.getCurrentUser();
+                setUserData(localUser);
+            }
             setLoading(false);
 
             try {
@@ -65,7 +71,7 @@ export default function Profile() {
                     style: 'destructive',
                     onPress: async () => {
                         try {
-                            await authService.logout();
+                            await logout();
                             navigation.navigate('Login' as never);
                         } catch (error) {
                             Alert.alert('Erro', 'Não foi possível fazer logout');
@@ -102,7 +108,10 @@ export default function Profile() {
                             />
                         </View>
                         <Text className="text-white font-bold text-2xl font-roboto">{userData?.name || 'Usuário'}</Text>
-                        <Text className="text-gray-400 font-bold font-roboto">{userData?.role === 'admin' ? 'Administrador' : 'Membro'}</Text>
+                        <Text className="text-gray-400 font-bold font-roboto">
+                            {userData?.role === 'admin' ? 'Administrador' : 
+                             userData?.role === 'personal' ? 'Personal Trainer' : 'Membro'}
+                        </Text>
 
 
 
@@ -175,7 +184,10 @@ export default function Profile() {
                             <View className="bg-secondary rounded-lg p-4">
                                 <View className="flex-row justify-between items-center mb-3">
                                     <Text className="text-gray-400 font-bold font-roboto">Tipo de Conta</Text>
-                                    <Text className="text-white font-bold font-roboto">{userData?.role === 'admin' ? 'Administrador' : 'Usuário'}</Text>
+                                    <Text className="text-white font-bold font-roboto">
+                                        {userData?.role === 'admin' ? 'Administrador' : 
+                                         userData?.role === 'personal' ? 'Personal Trainer' : 'Usuário'}
+                                    </Text>
                                 </View>
                                 <View className="flex-row justify-between items-center mb-3">
                                     <Text className="text-gray-400 font-bold font-roboto">Status</Text>
@@ -229,6 +241,18 @@ export default function Profile() {
 
 
                         <View className="w-full mt-8 mb-6">
+                            {userData?.role === 'personal' && (
+                                <TouchableOpacity
+                                    className="w-full bg-orange-500 rounded-lg p-4 items-center mb-4"
+                                    onPress={() => navigation.navigate('PersonalDashboard' as never)}
+                                >
+                                    <View className="flex-row items-center">
+                                        <MaterialIcons name="people" size={24} color="white" />
+                                        <Text className="text-white font-bold text-lg ml-2 font-roboto">Gerenciar Usuários</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            )}
+                            
                             <TouchableOpacity
                                 className="w-full bg-[#4abdd4] rounded-lg p-4 items-center mb-4"
                                 onPress={() => navigation.navigate('EditWorkout' as never)}

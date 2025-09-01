@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { SafeAreaView, View, Text, Image, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { authService } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function SplashScreen() {
     const navigation = useNavigation();
+    const { isAuthenticated, isLoading } = useAuth();
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const fadeOutAnim = useRef(new Animated.Value(1)).current;
 
@@ -28,15 +29,20 @@ export default function SplashScreen() {
         return () => clearTimeout(timer);
     }, []);
 
+    useEffect(() => {
+        if (!isLoading) {
+            checkAuthAndNavigate();
+        }
+    }, [isLoading, isAuthenticated]);
+
     const checkAuthAndNavigate = async () => {
-        try {
-            const isAuthenticated = await authService.isAuthenticated();
-            if (isAuthenticated) {
-                navigation.navigate('AppTabs' as never);
-            } else {
-                navigation.navigate('Login' as never);
-            }
-        } catch (error) {
+        if (isLoading) {
+            return;
+        }
+        
+        if (isAuthenticated) {
+            navigation.navigate('AppTabs' as never);
+        } else {
             navigation.navigate('Login' as never);
         }
     };
