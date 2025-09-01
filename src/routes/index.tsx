@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Dashboard from '../screens/dashboard';
 import { FontAwesome, MaterialCommunityIcons, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import Sessions from '../screens/sessions';
 import Progress from '../screens/progress';
 import Profile from '../screens/profile';
@@ -31,9 +31,11 @@ function AppTabs() {
                 tabBarStyle: {
                     paddingVertical: Platform.OS === 'ios' ? 20 : 0,
                     height: 70,
-                    backgroundColor: '#202938'
+                    backgroundColor: '#202938',
+                    borderTopWidth: 2,
+                    borderTopColor: '#9ba1ad',
                 },
-                animation: 'fade',
+                animation: 'shift',
                 tabBarHideOnKeyboard: true,
             }}>
             <Tab.Screen
@@ -95,11 +97,12 @@ function AppTabs() {
 
 function Routes() {
     return (
-        <NavigationContainer>
+        <NavigationContainer theme={DarkTheme}>
             <Stack.Navigator
                 initialRouteName="Splash"
                 screenOptions={{
-                    headerShown: false
+                    headerShown: false,
+                    cardStyle: { backgroundColor: '#1a1a1a' },
                 }}
             >
                 <Stack.Screen name="Splash" component={SplashScreen} />
