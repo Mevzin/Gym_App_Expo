@@ -9,7 +9,6 @@ import { validateEmail, validateRequired, validatePassword } from '../../utils/v
 export default function Register() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [weight, setWeight] = useState('');
@@ -42,7 +41,7 @@ export default function Register() {
             setPasswordError('');
         }
 
-        if (!name || !username || !confirmPassword || !weight || !age) {
+        if (!name || !confirmPassword || !weight || !age) {
             Alert.alert('Erro', 'Por favor, preencha todos os campos');
             isValid = false;
         }
@@ -67,7 +66,6 @@ export default function Register() {
             const userData = {
                 name,
                 email,
-                username,
                 password,
                 weight: parseFloat(weight),
                 age: parseInt(age, 10)
@@ -158,20 +156,7 @@ export default function Register() {
                         {passwordError ? <Text className="text-red-400 text-sm mt-1">{passwordError}</Text> : null}
                     </View>
 
-                    <View className="w-full mb-4">
-                        <Text className="text-white text-lg font-bold mb-2 font-roboto">Nome de usuário</Text>
-                        <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
-                            <FontAwesome name="at" size={20} color="#9ba1ad" />
-                            <TextInput
-                                className="flex-1 text-white ml-3"
-                                placeholder="Seu nome de usuário"
-                                placeholderTextColor="#9ba1ad"
-                                autoCapitalize="none"
-                                value={username}
-                                onChangeText={setUsername}
-                            />
-                        </View>
-                    </View>
+
 
                     <View className="w-full mb-4">
                         <Text className="text-white text-lg font-bold mb-2 font-roboto">Senha</Text>

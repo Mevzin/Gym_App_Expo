@@ -126,15 +126,7 @@ export default function Profile() {
                                     <FontAwesome name="angle-right" size={24} color="#FFF" />
                                 </View>
                             </Button>
-                            <Button className="w-full h-23 items-center bg-secondary rounded-lg p-4 mb-3">
-                                <View className="flex-row w-full justify-between items-center">
-                                    <View>
-                                        <Text className="text-gray-400 font-bold font-roboto">Usuário</Text>
-                                        <Text className="text-white font-bold text-lg font-roboto">{userData?.username || 'Não informado'}</Text>
-                                    </View>
-                                    <FontAwesome name="angle-right" size={24} color="#FFF" />
-                                </View>
-                            </Button>
+
                             <Button className="w-full h-23 items-center bg-secondary rounded-lg p-4 mb-3">
                                 <View className="flex-row w-full justify-between items-center">
                                     <View>
