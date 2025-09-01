@@ -4,6 +4,7 @@ import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import Button from '../../components/ui/button';
 import { useNavigation } from '@react-navigation/native';
 import { authService } from '../../services/api';
+import { validateEmail, validateRequired, validatePassword } from '../../utils/validation';
 
 export default function Register() {
     const [name, setName] = useState('');
@@ -14,16 +15,48 @@ export default function Register() {
     const [weight, setWeight] = useState('');
     const [age, setAge] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const navigation = useNavigation();
 
-    const handleRegister = async () => {
-        if (!name || !email || !username || !password || !confirmPassword || !weight || !age) {
+    const validateForm = () => {
+        let isValid = true;
+
+        if (!validateRequired(email)) {
+            setEmailError('Email é obrigatório');
+            isValid = false;
+        } else if (!validateEmail(email)) {
+            setEmailError('Email inválido');
+            isValid = false;
+        } else {
+            setEmailError('');
+        }
+
+        if (!validateRequired(password)) {
+            setPasswordError('Senha é obrigatória');
+            isValid = false;
+        } else if (!validatePassword(password)) {
+            setPasswordError('Senha deve ter pelo menos 6 caracteres');
+            isValid = false;
+        } else {
+            setPasswordError('');
+        }
+
+        if (!name || !username || !confirmPassword || !weight || !age) {
             Alert.alert('Erro', 'Por favor, preencha todos os campos');
-            return;
+            isValid = false;
         }
 
         if (password !== confirmPassword) {
             Alert.alert('Erro', 'As senhas não coincidem');
+            isValid = false;
+        }
+
+        return isValid;
+    };
+
+    const handleRegister = async () => {
+        if (!validateForm()) {
             return;
         }
 
@@ -40,7 +73,7 @@ export default function Register() {
                 age: parseInt(age, 10)
             };
 
-            const response = await authService.register(userData);
+            await authService.register(userData);
 
             setIsLoading(false);
             Alert.alert('Sucesso', 'Conta criada com sucesso!', [
@@ -48,7 +81,7 @@ export default function Register() {
             ]);
         } catch (error) {
             setIsLoading(false);
-            Alert.alert('Erro', 'Falha ao criar conta. Tente novamente.');
+            Alert.alert('Erro', 'Email já utilizado, por favor tente outro!.');
         }
     };
 
@@ -98,6 +131,7 @@ export default function Register() {
                                 onChangeText={setName}
                             />
                         </View>
+                        {emailError ? <Text className="text-red-400 text-sm mt-1">{emailError}</Text> : null}
                     </View>
 
                     <View className="w-full mb-4">
@@ -111,9 +145,17 @@ export default function Register() {
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 value={email}
-                                onChangeText={setEmail}
+                                onChangeText={(text) => {
+                                    setEmail(text)
+                                    if (emailError) {
+                                        if (validateRequired(text) && validateEmail(text)) {
+                                            setEmailError('')
+                                        }
+                                    }
+                                }}
                             />
                         </View>
+                        {passwordError ? <Text className="text-red-400 text-sm mt-1">{passwordError}</Text> : null}
                     </View>
 
                     <View className="w-full mb-4">
@@ -141,7 +183,14 @@ export default function Register() {
                                 placeholderTextColor="#9ba1ad"
                                 secureTextEntry
                                 value={password}
-                                onChangeText={setPassword}
+                                onChangeText={(text) => {
+                                    setPassword(text)
+                                    if (passwordError) {
+                                        if (validateRequired(text) && validatePassword(text)) {
+                                            setPasswordError('')
+                                        }
+                                    }
+                                }}
                             />
                         </View>
                     </View>

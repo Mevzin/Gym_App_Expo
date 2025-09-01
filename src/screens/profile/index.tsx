@@ -6,6 +6,8 @@ import Button from "../../components/ui/button";
 import { authService } from "../../services/api";
 import { useNavigation } from '@react-navigation/native';
 
+import { logger } from '../../utils/logger';
+
 export default function Profile() {
     const { width } = useWindowDimensions();
     const [userData, setUserData] = useState<any>(null);
@@ -19,20 +21,18 @@ export default function Profile() {
     const loadUserData = async () => {
         try {
             setLoading(true);
-            // Primeiro carrega dados locais para evitar tela branca
             const localUser = await authService.getCurrentUser();
             setUserData(localUser);
             setLoading(false);
-            
-            // Depois tenta atualizar com dados do servidor em background
+
             try {
                 const serverUser = await authService.getCurrentUserFromServer();
                 setUserData(serverUser);
             } catch (serverError) {
-                console.log('Usando dados locais - servidor indisponível');
+                logger.log('Usando dados locais - servidor indisponível');
             }
         } catch (error) {
-            console.error('Erro ao carregar dados do usuário:', error);
+            logger.error('Erro ao carregar dados do usuário:', error);
             setLoading(false);
         }
     };
@@ -235,9 +235,9 @@ export default function Profile() {
                             </View>
                         </View>
 
-        
+
                         <View className="w-full mt-8 mb-6">
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 className="w-full bg-[#4abdd4] rounded-lg p-4 items-center mb-4"
                                 onPress={() => navigation.navigate('EditWorkout' as never)}
                             >
@@ -246,8 +246,8 @@ export default function Profile() {
                                     <Text className="text-white font-bold text-lg ml-2 font-roboto">Editar Treino</Text>
                                 </View>
                             </TouchableOpacity>
-                            
-                            <TouchableOpacity 
+
+                            <TouchableOpacity
                                 className="w-full bg-red-600 rounded-lg p-4 items-center"
                                 onPress={handleLogout}
                             >

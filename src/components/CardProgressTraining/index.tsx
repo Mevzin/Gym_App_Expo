@@ -6,6 +6,7 @@ import { getDayOfWeek } from "../../utils/dateUtils";
 import { useCompletedExercises } from "../../contexts/CompletedExercisesContext";
 import { useFocusEffect } from '@react-navigation/native';
 import CardProgressTrainingSkeleton from "./skeleton";
+import { logger } from "../../utils/logger";
 
 
 export default function CardProgressTraining() {
@@ -60,7 +61,7 @@ export default function CardProgressTraining() {
                 setExercises([]);
             }
         } catch (error) {
-            console.error('Erro ao carregar dados dos exercícios:', error);
+            logger.error('Erro ao carregar dados dos exercícios:', error);
             setExercises([]);
         } finally {
             setLoading(false);

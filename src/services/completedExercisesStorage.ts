@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDayOfWeek } from '../utils/dateUtils';
+import { logger } from '../utils/logger';
 
 const COMPLETED_EXERCISES_KEY = 'completed_exercises';
 
@@ -15,7 +16,7 @@ export class CompletedExercisesStorage {
       const data = await AsyncStorage.getItem(COMPLETED_EXERCISES_KEY);
       return data ? JSON.parse(data) : [];
     } catch (error) {
-      console.error('Erro ao buscar exercícios finalizados:', error);
+      logger.error('Erro ao buscar exercícios finalizados:', error);
       return [];
     }
   }
@@ -39,7 +40,7 @@ export class CompletedExercisesStorage {
 
       await AsyncStorage.setItem(COMPLETED_EXERCISES_KEY, JSON.stringify(completedExercises));
     } catch (error) {
-      console.error('Erro ao marcar exercício como finalizado:', error);
+      logger.error('Erro ao marcar exercício como finalizado:', error);
     }
   }
 
@@ -53,7 +54,7 @@ export class CompletedExercisesStorage {
 
       await AsyncStorage.setItem(COMPLETED_EXERCISES_KEY, JSON.stringify(filteredExercises));
     } catch (error) {
-      console.error('Erro ao desmarcar exercício como finalizado:', error);
+      logger.error('Erro ao desmarcar exercício como finalizado:', error);
     }
   }
 
@@ -69,7 +70,7 @@ export class CompletedExercisesStorage {
           exercise.completedAt === today
       );
     } catch (error) {
-      console.error('Erro ao verificar se exercício está finalizado:', error);
+      logger.error('Erro ao verificar se exercício está finalizado:', error);
       return false;
     }
   }
@@ -88,7 +89,7 @@ export class CompletedExercisesStorage {
 
       await AsyncStorage.setItem(COMPLETED_EXERCISES_KEY, JSON.stringify(validExercises));
     } catch (error) {
-      console.error('Erro ao limpar exercícios antigos:', error);
+      logger.error('Erro ao limpar exercícios antigos:', error);
     }
   }
 
@@ -104,7 +105,7 @@ export class CompletedExercisesStorage {
         )
         .map(exercise => exercise.exerciseName);
     } catch (error) {
-      console.error('Erro ao buscar exercícios finalizados do dia:', error);
+      logger.error('Erro ao buscar exercícios finalizados do dia:', error);
       return [];
     }
   }

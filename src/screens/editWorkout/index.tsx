@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, TextInput } from 'reac
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { exerciseService } from '../../services/api';
+import { logger } from '../../utils/logger';
 
 interface Exercise {
     name: string;
@@ -185,7 +186,7 @@ export function EditWorkout() {
                 setSelectedExercises(initialSelected);
             }
         } catch (error) {
-            console.error('Erro ao carregar treino atual:', error);
+            logger.error('Erro ao carregar treino atual:', error);
             Alert.alert('Erro', 'Não foi possível carregar o treino atual.');
         } finally {
             setInitialLoading(false);
@@ -319,7 +320,7 @@ export function EditWorkout() {
                 }
             ]);
         } catch (error) {
-            console.error('Erro ao salvar configuração:', error);
+            logger.error('Erro ao salvar configuração:', error);
             Alert.alert('Erro', 'Não foi possível salvar as alterações do treino.');
         } finally {
             setLoading(false);

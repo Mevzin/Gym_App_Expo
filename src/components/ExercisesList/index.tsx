@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 import { useCompletedExercises } from "../../contexts/CompletedExercisesContext";
 import { CompletedExercisesStorage } from "../../services/completedExercisesStorage";
 import ExercisesListSkeleton from "./skeleton";
+import { logger } from "../../utils/logger";
 
 
 export default function ExercisesList() {
@@ -59,7 +60,7 @@ export default function ExercisesList() {
                 setExercises([]);
             }
         } catch (error) {
-            console.error('Erro ao carregar exercícios:', error);
+            logger.error('Erro ao carregar exercícios:', error);
             Alert.alert('Erro', 'Não foi possível carregar os exercícios.');
             setHasUserFile(false);
         } finally {
@@ -115,8 +116,8 @@ export default function ExercisesList() {
 
             Alert.alert('Sucesso', 'Exercícios criados com sucesso!');
         } catch (error) {
-            console.error('Erro ao criar exercícios:', error);
-            Alert.alert('Erro', 'Não foi possível criar os exercícios.');
+            logger.error('Erro ao criar exercícios:', error);
+            Alert.alert('Erro', 'Não foi possível criar os exercícios padrão.');
         } finally {
             setLoading(false);
         }

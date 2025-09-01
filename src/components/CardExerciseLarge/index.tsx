@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { exerciseService } from "../../services/api";
 import { getExerciseName } from "../../utils/exerciseUtils";
 import { useCompletedExercises } from "../../contexts/CompletedExercisesContext";
+import { logger } from "../../utils/logger";
 
 interface ICardExerciseLargeProps {
     name: string;
@@ -29,7 +30,7 @@ export default function CardExerciseLarge({ name, value, isFinished: initialIsFi
                 await markExerciseAsCompleted(name);
             }
         } catch (error) {
-            console.error('Erro ao atualizar status do exercício:', error);
+            logger.error('Erro ao atualizar status do exercício:', error);
         }
     }
 

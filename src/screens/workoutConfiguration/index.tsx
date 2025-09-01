@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, TextInput } from 'reac
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { exerciseService } from '../../services/api';
+import { logger } from "../../utils/logger";
 
 interface Exercise {
     name: string;
@@ -252,7 +253,7 @@ export function WorkoutConfiguration() {
                 }
             ]);
         } catch (error) {
-            console.error('Erro ao salvar configuração:', error);
+            logger.error('Erro ao salvar configuração:', error);
             Alert.alert('Erro', 'Não foi possível salvar a configuração do treino.');
         } finally {
             setLoading(false);

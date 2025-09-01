@@ -6,6 +6,7 @@ import { useWindowDimensions } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
 import { progressService, ProgressData } from '../../services/progressService';
 import { useFocusEffect } from '@react-navigation/native';
+import { logger } from "../../utils/logger";
 
 
 export default function Progress() {
@@ -19,7 +20,7 @@ export default function Progress() {
             const data = await progressService.getProgress();
             setProgressData(data);
         } catch (error) {
-            console.error('Erro ao carregar dados de progresso:', error);
+            logger.error('Erro ao carregar dados de progresso:', error);
         } finally {
             setLoading(false);
         }

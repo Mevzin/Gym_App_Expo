@@ -4,16 +4,41 @@ import { FontAwesome } from '@expo/vector-icons';
 import Button from '../../components/ui/button';
 import { useNavigation } from '@react-navigation/native';
 import { authService } from '../../services/api';
+import { validateEmail, validateRequired } from '../../utils/validation';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const navigation = useNavigation();
 
+    const validateForm = () => {
+        let isValid = true;
+        
+        if (!validateRequired(email)) {
+            setEmailError('Email é obrigatório');
+            isValid = false;
+        } else if (!validateEmail(email)) {
+            setEmailError('Email inválido');
+            isValid = false;
+        } else {
+            setEmailError('');
+        }
+        
+        if (!validateRequired(password)) {
+            setPasswordError('Senha é obrigatória');
+            isValid = false;
+        } else {
+            setPasswordError('');
+        }
+        
+        return isValid;
+    };
+
     const handleLogin = async () => {
-        if (!email || !password) {
-            Alert.alert('Erro', 'Por favor, preencha todos os campos');
+        if (!validateForm()) {
             return;
         }
 
@@ -83,9 +108,17 @@ export default function Login() {
                             keyboardType="email-address"
                             autoCapitalize="none"
                             value={email}
-                            onChangeText={setEmail}
+                            onChangeText={(text) => {
+                                setEmail(text);
+                                if (emailError) {
+                                    if (validateRequired(text) && validateEmail(text)) {
+                                        setEmailError('');
+                                    }
+                                }
+                            }}
                         />
                     </View>
+                    {emailError ? <Text className="text-red-400 text-sm mt-1">{emailError}</Text> : null}
                 </View>
 
                 <View className="w-full mb-6">
@@ -98,9 +131,15 @@ export default function Login() {
                             placeholderTextColor="#9ba1ad"
                             secureTextEntry
                             value={password}
-                            onChangeText={setPassword}
+                            onChangeText={(text) => {
+                                setPassword(text);
+                                if (passwordError && validateRequired(text)) {
+                                    setPasswordError('');
+                                }
+                            }}
                         />
                     </View>
+                    {passwordError ? <Text className="text-red-400 text-sm mt-1">{passwordError}</Text> : null}
                 </View>
 
                 <Button

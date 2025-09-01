@@ -1,5 +1,6 @@
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logger } from '../utils/logger';
 
 export interface ProgressData {
   weightLoss: {
@@ -108,7 +109,7 @@ export const progressService = {
       const backendData = response.data.data;
       return transformBackendData(backendData);
     } catch (error) {
-      console.error('Erro ao buscar dados de progresso:', error);
+      logger.error('Erro ao buscar dados de progresso:', error);
       throw error;
     }
   },
@@ -118,7 +119,7 @@ export const progressService = {
     try {
       await api.put('/progress/weight-loss', { currentWeight });
     } catch (error) {
-      console.error('Erro ao atualizar perda de peso:', error);
+      logger.error('Erro ao atualizar perda de peso:', error);
       throw error;
     }
   },
@@ -128,7 +129,7 @@ export const progressService = {
     try {
       await api.put('/progress/calories-burned', { calories });
     } catch (error) {
-      console.error('Erro ao atualizar calorias queimadas:', error);
+      logger.error('Erro ao atualizar calorias queimadas:', error);
       throw error;
     }
   },
@@ -138,7 +139,7 @@ export const progressService = {
     try {
       await api.post('/progress/complete-workout', workoutData);
     } catch (error) {
-      console.error('Erro ao completar treino:', error);
+      logger.error('Erro ao completar treino:', error);
       throw error;
     }
   },
@@ -148,7 +149,7 @@ export const progressService = {
     try {
       await api.put('/progress/performance-metrics', metrics);
     } catch (error) {
-      console.error('Erro ao atualizar métricas de performance:', error);
+      logger.error('Erro ao atualizar métricas de performance:', error);
       throw error;
     }
   },
@@ -158,7 +159,7 @@ export const progressService = {
     try {
       await api.post('/progress/achievements', achievement);
     } catch (error) {
-      console.error('Erro ao adicionar conquista:', error);
+      logger.error('Erro ao adicionar conquista:', error);
       throw error;
     }
   },
@@ -168,7 +169,7 @@ export const progressService = {
     try {
       await api.put('/progress/monthly-goals', goals);
     } catch (error) {
-      console.error('Erro ao atualizar metas mensais:', error);
+      logger.error('Erro ao atualizar metas mensais:', error);
       throw error;
     }
   },
@@ -178,7 +179,7 @@ export const progressService = {
     try {
       await api.post('/progress/reset-weekly');
     } catch (error) {
-      console.error('Erro ao resetar progresso semanal:', error);
+      logger.error('Erro ao resetar progresso semanal:', error);
       throw error;
     }
   },
@@ -192,7 +193,7 @@ export const progressService = {
       }
       return null;
     } catch (error) {
-      console.error('Erro ao obter usuário atual:', error);
+      logger.error('Erro ao obter usuário atual:', error);
       return null;
     }
   }

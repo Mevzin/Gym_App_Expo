@@ -29,8 +29,7 @@ function AppTabs() {
                     height: 70,
                     backgroundColor: '#202938'
                 },
-                animationEnabled: true,
-                animationTypeForReplace: 'push',
+                animation: 'fade',
                 tabBarHideOnKeyboard: true,
             }}>
             <Tab.Screen
@@ -93,9 +92,9 @@ function AppTabs() {
 function Routes() {
     return (
         <NavigationContainer>
-            <Stack.Navigator 
-                initialRouteName="Splash" 
-                screenOptions={{ 
+            <Stack.Navigator
+                initialRouteName="Splash"
+                screenOptions={{
                     headerShown: false
                 }}
             >
