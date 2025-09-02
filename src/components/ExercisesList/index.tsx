@@ -10,6 +10,7 @@ import { useCompletedExercises } from "../../contexts/CompletedExercisesContext"
 import { CompletedExercisesStorage } from "../../services/completedExercisesStorage";
 import ExercisesListSkeleton from "./skeleton";
 import { logger } from "../../utils/logger";
+import { useAuth } from "../../contexts/AuthContext";
 
 
 export default function ExercisesList() {
@@ -19,6 +20,7 @@ export default function ExercisesList() {
     const [hasUserFile, setHasUserFile] = useState<boolean | null>(null);
     const navigation = useNavigation();
     const { refreshCompletedExercises } = useCompletedExercises();
+    const { user } = useAuth();
 
     useEffect(() => {
         const dayOfWeek = getDayOfWeek();
@@ -28,7 +30,9 @@ export default function ExercisesList() {
     }, []);
 
     const initializeApp = async (day: string) => {
-        await CompletedExercisesStorage.cleanOldCompletedExercises();
+        if (user?.id) {
+            await CompletedExercisesStorage.cleanOldCompletedExercises(user.id);
+        }
         await refreshCompletedExercises();
         checkUserFileAndLoadExercises(day);
     };
@@ -37,13 +41,15 @@ export default function ExercisesList() {
         useCallback(() => {
             if (currentDay) {
                 const refreshData = async () => {
-                    await CompletedExercisesStorage.cleanOldCompletedExercises();
+                    if (user?.id) {
+                        await CompletedExercisesStorage.cleanOldCompletedExercises(user.id);
+                    }
                     await refreshCompletedExercises();
                     checkUserFileAndLoadExercises(currentDay);
                 };
                 refreshData();
             }
-        }, [currentDay, refreshCompletedExercises])
+        }, [currentDay, refreshCompletedExercises, user?.id])
     );
 
     const checkUserFileAndLoadExercises = async (day: any) => {

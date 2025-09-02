@@ -21,11 +21,10 @@ api.interceptors.request.use(async (config) => {
 });
 
 export const authService = {
-    
+
     login: async (email: string, password: string) => {
         try {
             const response = await api.post('/user/login', { email, password });
-
             if (response.data.token) {
                 await AsyncStorage.setItem('@GymApp:token', response.data.token);
                 await AsyncStorage.setItem('@GymApp:user', JSON.stringify(response.data.user));
@@ -37,7 +36,7 @@ export const authService = {
         }
     },
 
-    
+
     register: async (userData: any) => {
         try {
             const response = await api.post('/user/register', userData);
@@ -47,25 +46,23 @@ export const authService = {
         }
     },
 
-    
+
     logout: async () => {
         try {
             await AsyncStorage.removeItem('@GymApp:user');
-        await AsyncStorage.removeItem('@GymApp:token');
-        
-        await AsyncStorage.removeItem('completed_exercises');
+            await AsyncStorage.removeItem('@GymApp:token');
         } catch (error) {
             throw error;
         }
     },
 
-    
+
     isAuthenticated: async () => {
         const token = await AsyncStorage.getItem('@GymApp:token');
         return !!token;
     },
 
-    
+
     getCurrentUser: async () => {
         try {
             const userString = await AsyncStorage.getItem('@GymApp:user');
@@ -90,7 +87,7 @@ export const authService = {
 };
 
 export const exerciseService = {
-    
+
     getExercises: async (fileId: string) => {
         try {
             const response = await api.get(`/file/getFileById/${fileId}`);
@@ -100,7 +97,7 @@ export const exerciseService = {
         }
     },
 
-    
+
     getExercisesByUserId: async (userId: any) => {
         try {
             const response = await api.get(`/file/user/${userId}`);
@@ -110,7 +107,7 @@ export const exerciseService = {
         }
     },
 
-    
+
     getExercisesByDay: async (day: any) => {
         try {
             const userString = await AsyncStorage.getItem('@GymApp:user');
@@ -203,7 +200,7 @@ export const exerciseService = {
 
     createFile: async (exerciseData: any) => {
         try {
-            
+
             const userString = await AsyncStorage.getItem('@GymApp:user');
             let userId = null;
 
@@ -240,13 +237,13 @@ export const exerciseService = {
             }
 
             let userFile = await exerciseService.checkUserFile();
-            
+
             if (!userFile || !userFile._id) {
                 userFile = await exerciseService.createFile(exerciseData);
                 return userFile;
             }
 
-            
+
             const response = await api.put(`/files/updateFileById/${userFile._id}`, {
                 userId,
                 ...exerciseData

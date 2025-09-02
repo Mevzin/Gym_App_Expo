@@ -11,7 +11,6 @@ export default function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [weight, setWeight] = useState('');
     const [age, setAge] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [emailError, setEmailError] = useState('');
@@ -41,7 +40,7 @@ export default function Register() {
             setPasswordError('');
         }
 
-        if (!name || !confirmPassword || !weight || !age) {
+        if (!name || !confirmPassword || !age) {
             Alert.alert('Erro', 'Por favor, preencha todos os campos');
             isValid = false;
         }
@@ -55,9 +54,9 @@ export default function Register() {
     };
 
     const handleRegister = async () => {
-        if (!validateForm()) {
-            return;
-        }
+        // if (!validateForm()) {
+        //     return;
+        // }
 
         setIsLoading(true);
 
@@ -67,11 +66,10 @@ export default function Register() {
                 name,
                 email,
                 password,
-                weight: parseFloat(weight),
-                age: parseInt(age, 10)
+                age
             };
 
-            await authService.register(userData);
+            const response = await authService.register(userData);
 
             setIsLoading(false);
             Alert.alert('Sucesso', 'Conta criada com sucesso!', [
@@ -79,7 +77,7 @@ export default function Register() {
             ]);
         } catch (error) {
             setIsLoading(false);
-            Alert.alert('Erro', 'Email já utilizado, por favor tente outro!.');
+            Alert.alert('Erro', 'Ocorreu um erro ao tentar crias sua conta');
         }
     };
 
@@ -195,34 +193,18 @@ export default function Register() {
                         </View>
                     </View>
 
-                    <View className="w-full flex-row justify-between mb-4">
-                        <View className="w-[48%]">
-                            <Text className="text-white text-lg font-bold mb-2 font-roboto">Peso (kg)</Text>
-                            <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
-                                <MaterialCommunityIcons name="weight-kilogram" size={20} color="#9ba1ad" />
-                                <TextInput
-                                    className="flex-1 text-white ml-3"
-                                    placeholder="Seu peso"
-                                    placeholderTextColor="#9ba1ad"
-                                    keyboardType="numeric"
-                                    value={weight}
-                                    onChangeText={setWeight}
-                                />
-                            </View>
-                        </View>
-                        <View className="w-[48%]">
-                            <Text className="text-white text-lg font-bold mb-2 font-roboto">Idade</Text>
-                            <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
-                                <FontAwesome name="calendar" size={20} color="#9ba1ad" />
-                                <TextInput
-                                    className="flex-1 text-white ml-3"
-                                    placeholder="Sua idade"
-                                    placeholderTextColor="#9ba1ad"
-                                    keyboardType="numeric"
-                                    value={age}
-                                    onChangeText={setAge}
-                                />
-                            </View>
+                    <View className="w-full mb-4">
+                        <Text className="text-white text-lg font-bold mb-2 font-roboto">Idade</Text>
+                        <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
+                            <FontAwesome name="calendar" size={20} color="#9ba1ad" />
+                            <TextInput
+                                className="flex-1 text-white ml-3"
+                                placeholder="Sua idade"
+                                placeholderTextColor="#9ba1ad"
+                                keyboardType="numeric"
+                                value={age}
+                                onChangeText={setAge}
+                            />
                         </View>
                     </View>
 

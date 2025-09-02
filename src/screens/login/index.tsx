@@ -16,7 +16,7 @@ export default function Login() {
 
     const validateForm = () => {
         let isValid = true;
-        
+
         if (!validateRequired(email)) {
             setEmailError('Email é obrigatório');
             isValid = false;
@@ -26,14 +26,14 @@ export default function Login() {
         } else {
             setEmailError('');
         }
-        
+
         if (!validateRequired(password)) {
             setPasswordError('Senha é obrigatória');
             isValid = false;
         } else {
             setPasswordError('');
         }
-        
+
         return isValid;
     };
 
@@ -41,7 +41,6 @@ export default function Login() {
         if (!validateForm()) {
             return;
         }
-
         try {
             await login(email, password);
             navigation.navigate('AppTabs' as never);

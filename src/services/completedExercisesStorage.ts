@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getDayOfWeek } from '../utils/dateUtils';
 import { logger } from '../utils/logger';
 
-const COMPLETED_EXERCISES_KEY = 'completed_exercises';
+const getCompletedExercisesKey = (userId: string) => `completed_exercises_${userId}`;
 
 interface CompletedExercise {
   exerciseName: string;
@@ -11,9 +11,10 @@ interface CompletedExercise {
 }
 
 export class CompletedExercisesStorage {
-  static async getCompletedExercises(): Promise<CompletedExercise[]> {
+  static async getCompletedExercises(userId: string): Promise<CompletedExercise[]> {
     try {
-      const data = await AsyncStorage.getItem(COMPLETED_EXERCISES_KEY);
+      const key = getCompletedExercisesKey(userId);
+      const data = await AsyncStorage.getItem(key);
       return data ? JSON.parse(data) : [];
     } catch (error) {
       logger.error('Erro ao buscar exercícios finalizados:', error);
@@ -21,9 +22,9 @@ export class CompletedExercisesStorage {
     }
   }
 
-  static async markExerciseAsCompleted(exerciseName: string, day: string): Promise<void> {
+  static async markExerciseAsCompleted(userId: string, exerciseName: string, day: string): Promise<void> {
     try {
-      const completedExercises = await this.getCompletedExercises();
+      const completedExercises = await this.getCompletedExercises(userId);
       const today = new Date().toISOString().split('T')[0];
       
       const existingIndex = completedExercises.findIndex(
@@ -38,29 +39,31 @@ export class CompletedExercisesStorage {
         });
       }
 
-      await AsyncStorage.setItem(COMPLETED_EXERCISES_KEY, JSON.stringify(completedExercises));
+      const key = getCompletedExercisesKey(userId);
+      await AsyncStorage.setItem(key, JSON.stringify(completedExercises));
     } catch (error) {
       logger.error('Erro ao marcar exercício como finalizado:', error);
     }
   }
 
-  static async unmarkExerciseAsCompleted(exerciseName: string, day: string): Promise<void> {
+  static async unmarkExerciseAsCompleted(userId: string, exerciseName: string, day: string): Promise<void> {
     try {
-      const completedExercises = await this.getCompletedExercises();
+      const completedExercises = await this.getCompletedExercises(userId);
       
       const filteredExercises = completedExercises.filter(
         exercise => !(exercise.exerciseName === exerciseName && exercise.day === day)
       );
 
-      await AsyncStorage.setItem(COMPLETED_EXERCISES_KEY, JSON.stringify(filteredExercises));
+      const key = getCompletedExercisesKey(userId);
+      await AsyncStorage.setItem(key, JSON.stringify(filteredExercises));
     } catch (error) {
       logger.error('Erro ao desmarcar exercício como finalizado:', error);
     }
   }
 
-  static async isExerciseCompleted(exerciseName: string, day: string): Promise<boolean> {
+  static async isExerciseCompleted(userId: string, exerciseName: string, day: string): Promise<boolean> {
     try {
-      const completedExercises = await this.getCompletedExercises();
+      const completedExercises = await this.getCompletedExercises(userId);
       const today = new Date().toISOString().split('T')[0];
       
       return completedExercises.some(
@@ -75,9 +78,9 @@ export class CompletedExercisesStorage {
     }
   }
 
-  static async cleanOldCompletedExercises(): Promise<void> {
+  static async cleanOldCompletedExercises(userId: string): Promise<void> {
     try {
-      const completedExercises = await this.getCompletedExercises();
+      const completedExercises = await this.getCompletedExercises(userId);
       const today = new Date().toISOString().split('T')[0];
       const currentDay = getDayOfWeek();
       
@@ -87,15 +90,16 @@ export class CompletedExercisesStorage {
         return isToday && isCurrentDay;
       });
 
-      await AsyncStorage.setItem(COMPLETED_EXERCISES_KEY, JSON.stringify(validExercises));
+      const key = getCompletedExercisesKey(userId);
+      await AsyncStorage.setItem(key, JSON.stringify(validExercises));
     } catch (error) {
       logger.error('Erro ao limpar exercícios antigos:', error);
     }
   }
 
-  static async getCompletedExercisesForDay(day: string): Promise<string[]> {
+  static async getCompletedExercisesForDay(userId: string, day: string): Promise<string[]> {
     try {
-      const completedExercises = await this.getCompletedExercises();
+      const completedExercises = await this.getCompletedExercises(userId);
       const today = new Date().toISOString().split('T')[0];
       
       return completedExercises

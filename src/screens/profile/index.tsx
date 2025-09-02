@@ -5,7 +5,9 @@ import { useState, useEffect } from 'react';
 import Button from "../../components/ui/button";
 import { useAuth } from "../../contexts/AuthContext";
 import { authService } from "../../services/api";
+import api from "../../services/api";
 import { useNavigation } from '@react-navigation/native';
+import { BodyMeasurements, MeasurementsForm } from "../../components/BodyMeasurements";
 
 import { logger } from '../../utils/logger';
 
@@ -14,6 +16,9 @@ export default function Profile() {
     const { user, logout } = useAuth();
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [showMeasurementsForm, setShowMeasurementsForm] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [measurementsData, setMeasurementsData] = useState<any>(null);
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -43,19 +48,7 @@ export default function Profile() {
         }
     };
 
-    const formatHeight = (height: number) => {
-        if (!height) return 'Não informado';
-        const feet = Math.floor(height / 30.48);
-        const inches = Math.round((height % 30.48) / 2.54);
-        return `${feet}'${inches}" (${height}cm)`;
-    };
 
-    const calculateBMI = (weight: number, height: number) => {
-        if (!weight || !height) return 'N/A';
-        const heightInMeters = height / 100;
-        const bmi = weight / (heightInMeters * heightInMeters);
-        return bmi.toFixed(1);
-    };
 
     const handleLogout = () => {
         Alert.alert(
@@ -109,8 +102,8 @@ export default function Profile() {
                         </View>
                         <Text className="text-white font-bold text-2xl font-roboto">{userData?.name || 'Usuário'}</Text>
                         <Text className="text-gray-400 font-bold font-roboto">
-                            {userData?.role === 'admin' ? 'Administrador' : 
-                             userData?.role === 'personal' ? 'Personal Trainer' : 'Membro'}
+                            {userData?.role === 'admin' ? 'Administrador' :
+                                userData?.role === 'personal' ? 'Personal Trainer' : 'Membro'}
                         </Text>
 
 
@@ -148,35 +141,26 @@ export default function Profile() {
                         </View>
 
                         <View className="w-full mt-5">
-                            <Text className="text-white font-bold text-xl mb-3 font-roboto">Métricas Físicas</Text>
-                            <Button className="w-full h-23 items-center bg-secondary rounded-lg p-4 mb-3">
-                                <View className="flex-row w-full justify-between items-center">
-                                    <View>
-                                        <Text className="text-gray-400 font-bold font-roboto">Peso</Text>
-                                        <Text className="text-white font-bold text-lg font-roboto">{userData?.weight ? `${userData.weight} kg` : 'Não informado'}</Text>
-                                    </View>
-                                    <FontAwesome name="angle-right" size={24} color="#FFF" />
-                                </View>
-                            </Button>
-                            <Button className="w-full h-23 items-center bg-secondary rounded-lg p-4 mb-3">
-                                <View className="flex-row w-full justify-between items-center">
-                                    <View>
-                                        <Text className="text-gray-400 font-bold font-roboto">Altura</Text>
-                                        <Text className="text-white font-bold text-lg font-roboto">{formatHeight(userData?.height)}</Text>
-                                    </View>
-                                    <FontAwesome name="angle-right" size={24} color="#FFF" />
-                                </View>
-                            </Button>
-                            <Button className="w-full h-23 items-center bg-secondary rounded-lg p-4 mb-3">
-                                <View className="flex-row w-full justify-between items-center">
-                                    <View>
-                                        <Text className="text-gray-400 font-bold font-roboto">IMC</Text>
-                                        <Text className="text-white font-bold text-lg font-roboto">{calculateBMI(userData?.weight, userData?.height)}</Text>
-                                    </View>
-                                    <FontAwesome name="angle-right" size={24} color="#FFF" />
-                                </View>
-                            </Button>
-
+                            {showMeasurementsForm ? (
+                                <MeasurementsForm
+                                    initialData={measurementsData}
+                                    onSave={() => {
+                                        setShowMeasurementsForm(false);
+                                        loadUserData();
+                                        setRefreshTrigger(prev => prev + 1);
+                                    }}
+                                    onCancel={() => setShowMeasurementsForm(false)}
+                                />
+                            ) : (
+                                <BodyMeasurements
+                                    editable={true}
+                                    onEdit={(measurements) => {
+                                        setMeasurementsData(measurements);
+                                        setShowMeasurementsForm(true);
+                                    }}
+                                    refreshTrigger={refreshTrigger}
+                                />
+                            )}
                         </View>
 
                         <View className="w-full mt-5">
@@ -185,8 +169,8 @@ export default function Profile() {
                                 <View className="flex-row justify-between items-center mb-3">
                                     <Text className="text-gray-400 font-bold font-roboto">Tipo de Conta</Text>
                                     <Text className="text-white font-bold font-roboto">
-                                        {userData?.role === 'admin' ? 'Administrador' : 
-                                         userData?.role === 'personal' ? 'Personal Trainer' : 'Usuário'}
+                                        {userData?.role === 'admin' ? 'Administrador' :
+                                            userData?.role === 'personal' ? 'Personal Trainer' : 'Usuário'}
                                     </Text>
                                 </View>
                                 <View className="flex-row justify-between items-center mb-3">
@@ -203,6 +187,8 @@ export default function Profile() {
                                 </View>
                             </View>
                         </View>
+
+
 
                         <View className="w-full mt-5 mb-8">
                             <Text className="text-white font-bold text-xl mb-3 font-roboto">Preferences</Text>
@@ -252,7 +238,7 @@ export default function Profile() {
                                     </View>
                                 </TouchableOpacity>
                             )}
-                            
+
                             <TouchableOpacity
                                 className="w-full bg-[#4abdd4] rounded-lg p-4 items-center mb-4"
                                 onPress={() => navigation.navigate('EditWorkout' as never)}
