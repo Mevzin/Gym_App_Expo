@@ -175,7 +175,6 @@ const MeasurementsForm: React.FC<MeasurementsFormProps> = ({
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView className="flex-1 bg-primary" showsVerticalScrollIndicator={false}>
-        {/* Header */}
         <View className="flex-row justify-between items-center p-5 bg-secondary border-b border-gray-200">
           <View className="flex-row items-center">
             <Ionicons name="body-outline" size={28} color="#3B82F6" />
@@ -188,7 +187,6 @@ const MeasurementsForm: React.FC<MeasurementsFormProps> = ({
           )}
         </View>
 
-        {/* Formulário */}
         <View className="p-5 bg-primary">
           {formFields.map((field, index) => (
             <View key={field.key} className="mb-6">
@@ -217,7 +215,6 @@ const MeasurementsForm: React.FC<MeasurementsFormProps> = ({
           ))}
         </View>
 
-        {/* Dicas */}
         <View className="bg-secondary mb-5 mx-5 p-4 rounded-xl border-l-4 border-blue-500">
           <View className="flex-row items-center mb-2">
             <Ionicons name="information-circle-outline" size={24} color="#3B82F6" />
@@ -233,7 +230,6 @@ const MeasurementsForm: React.FC<MeasurementsFormProps> = ({
         </View>
       </ScrollView>
 
-      {/* Botões de ação */}
       <View className="flex-row p-5 bg-secondary border-t border-gray-200 gap-3">
         {onCancel && (
           <TouchableOpacity

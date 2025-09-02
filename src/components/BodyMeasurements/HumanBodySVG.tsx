@@ -28,22 +28,11 @@ const HumanBodySVG: React.FC<HumanBodySVGProps> = ({
 }) => {
   const scale = Math.min(width / 300, height / 500);
 
-  // Corpo principal simplificado
   const bodyPath = "M150,80 L140,120 L135,180 L130,240 L125,300 L130,360 L140,420 L160,420 L170,360 L175,300 L170,240 L165,180 L160,120 Z";
-
-  // Cabeça
   const headPath = "M150,30 C165,30 175,40 175,55 C175,70 165,80 150,80 C135,80 125,70 125,55 C125,40 135,30 150,30 Z";
-
-  // Braço esquerdo
   const leftArmPath = "M140,120 L110,140 L90,160 L85,170 L90,175 L110,155 L140,135 Z";
-
-  // Braço direito
   const rightArmPath = "M160,120 L190,140 L210,160 L215,170 L210,175 L190,155 L160,135 Z";
-
-  // Perna esquerda
   const leftLegPath = "M140,300 L135,360 L130,420 L125,480 L135,485 L145,480 L150,420 L155,360 L150,300 Z";
-
-  // Perna direita
   const rightLegPath = "M160,300 L165,360 L170,420 L175,480 L165,485 L155,480 L150,420 L145,360 L150,300 Z";
 
   const measurementPoints = [
@@ -59,7 +48,6 @@ const HumanBodySVG: React.FC<HumanBodySVGProps> = ({
     <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: '#222b38', padding: 10 }}>
       <Svg width={width} height={height} viewBox="0 0 300 500" style={{ backgroundColor: '#222b38' }}>
 
-        {/* Cabeça */}
         <Path
           d={headPath}
           fill="none"
@@ -68,7 +56,6 @@ const HumanBodySVG: React.FC<HumanBodySVGProps> = ({
           strokeDasharray="5,5"
         />
 
-        {/* Corpo principal */}
         <Path
           d={bodyPath}
           fill="none"
@@ -77,7 +64,6 @@ const HumanBodySVG: React.FC<HumanBodySVGProps> = ({
           strokeDasharray="5,5"
         />
 
-        {/* Braços */}
         <Path
           d={leftArmPath}
           fill="none"
@@ -93,7 +79,6 @@ const HumanBodySVG: React.FC<HumanBodySVGProps> = ({
           strokeDasharray="5,5"
         />
 
-        {/* Pernas */}
         <Path
           d={leftLegPath}
           fill="none"
@@ -109,14 +94,12 @@ const HumanBodySVG: React.FC<HumanBodySVGProps> = ({
           strokeDasharray="5,5"
         />
 
-        {/* Pontos de medição e labels */}
         {showMeasurements && measurementPoints.map((point, index) => {
           const lineEndX = point.side === 'right' ? point.x + 50 : point.x - 50;
           const textX = point.side === 'right' ? lineEndX + 5 : lineEndX - 5;
 
           return (
             <G key={index}>
-              {/* Ponto de medição */}
               <Circle
                 cx={point.x}
                 cy={point.y}
@@ -126,7 +109,6 @@ const HumanBodySVG: React.FC<HumanBodySVGProps> = ({
                 strokeWidth="2"
               />
 
-              {/* Linha indicativa */}
               <Line
                 x1={point.x}
                 y1={point.y}
@@ -137,7 +119,6 @@ const HumanBodySVG: React.FC<HumanBodySVGProps> = ({
                 strokeDasharray="3,3"
               />
 
-              {/* Label e valor */}
               <SvgText
                 x={textX}
                 y={point.y - 8}

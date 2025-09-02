@@ -54,10 +54,6 @@ export default function Register() {
     };
 
     const handleRegister = async () => {
-        // if (!validateForm()) {
-        //     return;
-        // }
-
         setIsLoading(true);
 
         try {

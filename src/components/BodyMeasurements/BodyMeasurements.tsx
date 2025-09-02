@@ -60,7 +60,6 @@ const BodyMeasurements: React.FC<BodyMeasurementsProps> = ({
       setMeasurements(response.data);
     } catch (error: any) {
       if (error.response?.status === 404) {
-        // Usuário não tem medidas corporais cadastradas
         setMeasurements(null);
       } else {
         Alert.alert('Erro', 'Não foi possível carregar as medidas corporais');
@@ -125,7 +124,6 @@ const BodyMeasurements: React.FC<BodyMeasurementsProps> = ({
 
   return (
     <ScrollView className="flex-1 bg-primary" showsVerticalScrollIndicator={false}>
-      {/* Header */}
       <View className="flex-row justify-between items-center px-5 h-20 bg-secondary rounded-t-lg border-b border-border">
         <View className="flex-1">
           <Text className="text-3xl font-bold text-white">Medidas Corporais</Text>
@@ -142,7 +140,6 @@ const BodyMeasurements: React.FC<BodyMeasurementsProps> = ({
         )}
       </View>
 
-      {/* IMC Card */}
       <View className="bg-secondary m-6 p-6 rounded-xl shadow-lg">
         <View className="flex-row items-center mb-4">
           <Ionicons name="analytics-outline" size={28} color={bmiInfo.color} />
@@ -157,7 +154,6 @@ const BodyMeasurements: React.FC<BodyMeasurementsProps> = ({
           </Text>
         </View>
 
-        {/* Altura e Peso */}
         <View className="flex-row justify-around pt-4 border-t border-border">
           <View className="items-center">
             <Ionicons name="resize-outline" size={24} color="#6B7280" />
@@ -172,7 +168,6 @@ const BodyMeasurements: React.FC<BodyMeasurementsProps> = ({
         </View>
       </View>
 
-      {/* Visualização do Corpo */}
       <View className="bg-secondary m-6 mt-0 py-6 px-5 rounded-xl shadow-lg w-95%">
         <Text className="text-2xl font-bold text-white mb-6">Visualização Corporal</Text>
         <View className="items-center justify-center rounded-lg w-full">
@@ -185,7 +180,6 @@ const BodyMeasurements: React.FC<BodyMeasurementsProps> = ({
         </View>
       </View>
 
-      {/* Toggle para detalhes */}
       <TouchableOpacity
         className="flex-row justify-center items-center bg-secondary mx-6 p-5 rounded-lg shadow-sm"
         onPress={() => setShowDetails(!showDetails)}
@@ -200,7 +194,6 @@ const BodyMeasurements: React.FC<BodyMeasurementsProps> = ({
         />
       </TouchableOpacity>
 
-      {/* Detalhes das medidas */}
       {showDetails && (
         <View className="bg-secondary m-6 mt-3 p-6 rounded-xl shadow-lg">
           <Text className="text-2xl font-bold text-white mb-6">Detalhes das Medidas</Text>
