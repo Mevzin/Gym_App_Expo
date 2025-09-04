@@ -24,14 +24,25 @@ export const authService = {
 
     login: async (email: string, password: string) => {
         try {
+            console.log('🌐 API: Fazendo requisição de login para:', email);
+            console.log('🌐 API: URL da requisição:', `${API_URL}/user/login`);
+            
             const response = await api.post('/user/login', { email, password });
+            console.log('🌐 API: Resposta recebida:', response.data);
+            
             if (response.data.token) {
+                console.log('🌐 API: Token recebido, salvando no AsyncStorage...');
                 await AsyncStorage.setItem('@GymApp:token', response.data.token);
                 await AsyncStorage.setItem('@GymApp:user', JSON.stringify(response.data.user));
             }
 
             return response.data;
         } catch (error) {
+            console.error('🌐 API: Erro na requisição de login:', error);
+            if (error.response) {
+                console.error('🌐 API: Status do erro:', error.response.status);
+                console.error('🌐 API: Dados do erro:', error.response.data);
+            }
             throw error;
         }
     },

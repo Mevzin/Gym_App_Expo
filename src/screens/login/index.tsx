@@ -42,7 +42,10 @@ export default function Login() {
             return;
         }
         try {
-            await login(email, password);
+
+            const response = await login(email, password);
+            console.log(response);
+
             navigation.navigate('AppTabs' as never);
         } catch (error) {
             Alert.alert('Erro', 'Falha ao fazer login. Verifique suas credenciais.');

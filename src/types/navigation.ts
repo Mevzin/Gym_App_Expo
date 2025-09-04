@@ -29,6 +29,7 @@ export type RootStackParamList = {
   UserWorkoutDetails: {
     user: User;
   };
+  Subscription: undefined;
 };
 
 export type EditUserWorkoutNavigationProp = StackNavigationProp<RootStackParamList, 'EditUserWorkout'>;
@@ -37,4 +38,12 @@ export type EditUserWorkoutRouteProp = RouteProp<RootStackParamList, 'EditUserWo
 export interface EditUserWorkoutProps {
   navigation: EditUserWorkoutNavigationProp;
   route: EditUserWorkoutRouteProp;
+}
+
+export type SubscriptionNavigationProp = StackNavigationProp<RootStackParamList, 'Subscription'>;
+export type SubscriptionRouteProp = RouteProp<RootStackParamList, 'Subscription'>;
+
+export interface SubscriptionProps {
+  navigation: SubscriptionNavigationProp;
+  route: SubscriptionRouteProp;
 }

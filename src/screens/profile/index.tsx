@@ -250,6 +250,16 @@ export default function Profile() {
                             </TouchableOpacity>
 
                             <TouchableOpacity
+                                className="w-full bg-purple-600 rounded-lg p-4 items-center mb-4"
+                                onPress={() => navigation.navigate('Subscription' as never)}
+                            >
+                                <View className="flex-row items-center">
+                                    <MaterialIcons name="star" size={24} color="white" />
+                                    <Text className="text-white font-bold text-lg ml-2 font-roboto">Assinatura Premium</Text>
+                                </View>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
                                 className="w-full bg-red-600 rounded-lg p-4 items-center"
                                 onPress={handleLogout}
                             >

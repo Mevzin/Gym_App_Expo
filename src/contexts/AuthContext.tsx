@@ -70,17 +70,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('🔐 Iniciando login com:', email);
       setIsLoading(true);
+      
+      console.log('📡 Chamando authService.login...');
       const response = await authService.login(email, password);
+      console.log('✅ Resposta do login:', response);
       
       if (response.token && response.user) {
+        console.log('💾 Salvando dados no AsyncStorage...');
+        // Salvar no AsyncStorage
+        await AsyncStorage.setItem('@GymApp:token', response.token);
+        await AsyncStorage.setItem('@GymApp:user', JSON.stringify(response.user));
+        
+        console.log('🔄 Atualizando estado...');
+        // Atualizar estado
         setToken(response.token);
         setUser(response.user);
         setIsAuthenticated(true);
+        console.log('✅ Login realizado com sucesso!');
       } else {
+        console.error('❌ Resposta inválida do servidor:', response);
         throw new Error('Invalid response from server');
       }
     } catch (error) {
+      console.error('❌ Erro durante o login:', error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -90,6 +104,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     try {
       await authService.logout();
+      
+      // Remover do AsyncStorage
+      await AsyncStorage.removeItem('@GymApp:token');
+      await AsyncStorage.removeItem('@GymApp:user');
+      
+      // Atualizar estado
       setToken(null);
       setUser(null);
       setIsAuthenticated(false);

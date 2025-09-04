@@ -15,6 +15,7 @@ import SplashScreen from '../screens/splash';
 import PersonalDashboard from '../screens/personalDashboard';
 import EditUserWorkout from '../screens/editUserWorkout';
 import UserWorkoutDetails from '../screens/userWorkoutDetails';
+import SubscriptionScreen from '../screens/subscription';
 import { RootStackParamList } from '../types/navigation';
 
 const Tab = createBottomTabNavigator();
@@ -114,6 +115,7 @@ function Routes() {
                 <Stack.Screen name="PersonalDashboard" component={PersonalDashboard} />
                 <Stack.Screen name="EditUserWorkout" component={EditUserWorkout} />
                 <Stack.Screen name="UserWorkoutDetails" component={UserWorkoutDetails} />
+                <Stack.Screen name="Subscription" component={SubscriptionScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );
