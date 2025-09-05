@@ -70,9 +70,8 @@ export default function SubscriptionScreen() {
         {
           text: 'OK',
           onPress: () => {
-            setCurrentStep('view');
-            setHasSubscription(true);
-            checkSubscriptionStatus();
+
+            navigation.navigate('Profile' as never);
           },
         },
       ]

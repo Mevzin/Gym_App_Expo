@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { logger } from '../../utils/logger';
 import { formatStripePrice } from '../../utils/priceUtils';
+import { paymentService } from '../../services/paymentService';
 
 export default function Profile() {
     const { user, logout } = useAuth();
@@ -80,6 +81,42 @@ export default function Profile() {
     };
 
 
+
+    const handleCancelSubscription = () => {
+        if (!subscriptionData) return;
+
+        Alert.alert(
+            'Cancelar Assinatura',
+            'Tem certeza que deseja cancelar sua assinatura? Você ainda terá acesso aos recursos premium até o final do período atual.',
+            [
+                {
+                    text: 'Não',
+                    style: 'cancel'
+                },
+                {
+                    text: 'Sim, Cancelar',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await paymentService.cancelSubscription(subscriptionData.stripeSubscriptionId);
+                            Alert.alert(
+                                'Assinatura Cancelada',
+                                'Sua assinatura foi cancelada com sucesso. Você ainda terá acesso aos recursos premium até o final do período atual.'
+                            );
+
+                            await loadSubscriptionData();
+                        } catch (error: any) {
+                            console.error('Erro ao cancelar assinatura:', error);
+                            Alert.alert(
+                                'Erro',
+                                error.response?.data?.message || 'Erro ao cancelar assinatura'
+                            );
+                        }
+                    }
+                }
+            ]
+        );
+    };
 
     const handleLogout = () => {
         Alert.alert(
@@ -247,12 +284,24 @@ export default function Profile() {
                                         )}
 
                                         {subscriptionData?.planPrice && (
-                                            <View className="flex-row justify-between items-center mb-3">
+                                            <View className="flex-row justify-between items-center mb-1">
                                                 <Text className="text-gray-400 font-bold font-roboto">Valor</Text>
                                                 <Text className="text-white font-bold font-roboto">
                                                     {formatStripePrice(subscriptionData.planPrice, subscriptionData.currency || 'BRL')}/{subscriptionData.interval === 'month' ? 'mês' : 'ano'}
                                                 </Text>
                                             </View>
+                                        )}
+
+                                        {paymentService.canCancelSubscription(subscriptionData) && (
+                                            <TouchableOpacity
+                                                className="w-full bg-red-600 rounded-lg p-3 items-center my-2"
+                                                onPress={handleCancelSubscription}
+                                            >
+                                                <View className="flex-row items-center">
+                                                    <MaterialIcons name="cancel" size={20} color="white" />
+                                                    <Text className="text-white font-bold text-sm ml-2 font-roboto">Cancelar Assinatura</Text>
+                                                </View>
+                                            </TouchableOpacity>
                                         )}
                                     </>
                                 ) : (
