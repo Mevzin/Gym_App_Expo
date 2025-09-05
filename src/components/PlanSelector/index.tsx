@@ -4,6 +4,7 @@ import { Card } from '../ui/card';
 import Button from '../ui/button';
 import api from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { formatStripePrice } from '../../utils/priceUtils';
 
 interface Plan {
   _id: string;
@@ -43,10 +44,10 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const activePlans = response.data.filter((plan: Plan) => plan.isActive);
+      const activePlans = response.data.plans.filter((plan: Plan) => plan.isActive);
       setPlans(activePlans);
 
-      // Se há um plano pré-selecionado, encontrá-lo
+  
       if (selectedPlanId) {
         const preSelectedPlan = activePlans.find((plan: Plan) => plan._id === selectedPlanId);
         if (preSelectedPlan) {
@@ -60,12 +61,7 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
     }
   };
 
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(price / 100);
-  };
+
 
   const calculateYearlySavings = (monthlyPlan: Plan, yearlyPlan: Plan) => {
     const monthlyYearlyTotal = monthlyPlan.price * 12;
@@ -79,13 +75,13 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
   };
 
   const getPopularPlan = () => {
-    // Considera o plano mensal como mais popular
-    return plans.find(plan => plan.interval === 'month');
+    
+    return plans?.find(plan => plan.interval === 'month');
   };
 
   const getBestValuePlan = () => {
-    // Considera o plano anual como melhor valor
-    return plans.find(plan => plan.interval === 'year');
+    
+    return plans?.find(plan => plan.interval === 'year');
   };
 
   if (loading) {
@@ -109,8 +105,8 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
 
   const popularPlan = getPopularPlan();
   const bestValuePlan = getBestValuePlan();
-  const monthlyPlan = plans.find(plan => plan.interval === 'month');
-  const yearlyPlan = plans.find(plan => plan.interval === 'year');
+  const monthlyPlan = plans?.find(plan => plan.interval === 'month');
+    const yearlyPlan = plans?.find(plan => plan.interval === 'year');
 
   return (
     <ScrollView className="flex-1 p-4">
@@ -122,7 +118,7 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
       {monthlyPlan && yearlyPlan && (
         <View className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
           <Text className="text-center text-green-800 font-semibold">
-            💰 Economize {formatPrice(calculateYearlySavings(monthlyPlan, yearlyPlan), yearlyPlan.currency)}
+            💰 Economize {formatStripePrice(calculateYearlySavings(monthlyPlan, yearlyPlan), yearlyPlan.currency)}
             escolhendo o plano anual!
           </Text>
         </View>
@@ -165,7 +161,7 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
 
                   <View className="items-end">
                     <Text className="text-2xl font-bold text-blue-600">
-                      {formatPrice(plan.price, plan.currency)}
+                      {formatStripePrice(plan.price, plan.currency)}
                     </Text>
                     <Text className="text-sm text-gray-500">
                       /{plan.interval === 'month' ? 'mês' : 'ano'}
@@ -173,7 +169,7 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
 
                     {plan.interval === 'year' && monthlyPlan && (
                       <Text className="text-xs text-green-600 font-medium mt-1">
-                        {formatPrice(plan.price / 12, plan.currency)}/mês
+                        {formatStripePrice(plan.price / 12, plan.currency)}/mês
                       </Text>
                     )}
                   </View>

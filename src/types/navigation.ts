@@ -30,6 +30,8 @@ export type RootStackParamList = {
     user: User;
   };
   Subscription: undefined;
+  PlanCreation: undefined;
+  PlansManagement: undefined;
 };
 
 export type EditUserWorkoutNavigationProp = StackNavigationProp<RootStackParamList, 'EditUserWorkout'>;

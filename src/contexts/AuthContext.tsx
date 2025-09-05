@@ -79,12 +79,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       if (response.token && response.user) {
         console.log('💾 Salvando dados no AsyncStorage...');
-        // Salvar no AsyncStorage
+    
         await AsyncStorage.setItem('@GymApp:token', response.token);
         await AsyncStorage.setItem('@GymApp:user', JSON.stringify(response.user));
         
         console.log('🔄 Atualizando estado...');
-        // Atualizar estado
+    
         setToken(response.token);
         setUser(response.user);
         setIsAuthenticated(true);
@@ -105,11 +105,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await authService.logout();
       
-      // Remover do AsyncStorage
+  
       await AsyncStorage.removeItem('@GymApp:token');
       await AsyncStorage.removeItem('@GymApp:user');
       
-      // Atualizar estado
+  
       setToken(null);
       setUser(null);
       setIsAuthenticated(false);

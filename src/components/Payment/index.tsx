@@ -5,6 +5,7 @@ import Button from '../ui/button';
 import { Card } from '../ui/card';
 import api from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { formatStripePrice } from '../../utils/priceUtils';
 
 interface Plan {
   _id: string;
@@ -29,7 +30,7 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
   onPaymentSuccess,
   onPaymentError,
 }) => {
-  const { confirmPayment, initPaymentSheet, presentPaymentSheet } = useStripe();
+  const { confirmPayment, createPaymentMethod } = useStripe();
   const [loading, setLoading] = useState(false);
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -45,9 +46,10 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
       const response = await api.get('/payment/plans', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setPlans(response.data);
+      setPlans(response.data.plans || []);
     } catch (error) {
       console.error('Erro ao buscar planos:', error);
+      setPlans([]);
     }
   };
 
@@ -67,21 +69,46 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
     try {
       const token = await AsyncStorage.getItem('@GymApp:token');
 
-      // Criar cliente no Stripe se necessário
-      await api.post('/payment/create-customer', {}, {
+  
+      const userData = await AsyncStorage.getItem('@GymApp:user');
+      const user = userData ? JSON.parse(userData) : null;
+      const userId = user?.id || user?._id;
+      
+      if (!userId) {
+        throw new Error('Usuário não encontrado');
+      }
+      
+      await api.post('/payment/customer', { userId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Criar assinatura
-      const subscriptionResponse = await api.post('/payment/create-subscription', {
+  
+      const { error: paymentMethodError, paymentMethod } = await createPaymentMethod({
+        paymentMethodType: 'Card',
+      });
+
+      if (paymentMethodError || !paymentMethod) {
+        throw new Error(paymentMethodError?.message || 'Erro ao criar método de pagamento');
+      }
+
+  
+      const subscriptionResponse = await api.post('/payment/subscription', {
         planId: selectedPlanId,
+        paymentMethodId: paymentMethod.id,
       }, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const { clientSecret } = subscriptionResponse.data;
 
-      // Confirmar pagamento
+  
+      if (!clientSecret) {
+        throw new Error('Client secret não recebido do servidor');
+      }
+
+      console.log('Client secret recebido:', clientSecret ? 'exists' : 'null');
+
+  
       const { error } = await confirmPayment(clientSecret, {
         paymentMethodType: 'Card',
       });
@@ -104,14 +131,9 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
     }
   };
 
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(price / 100);
-  };
 
-  const currentPlan = plans.find(plan => plan._id === selectedPlanId) || selectedPlan;
+
+  const currentPlan = plans?.find(plan => plan._id === selectedPlanId) || selectedPlan;
 
   return (
     <View className="p-4">
@@ -122,7 +144,7 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
           <Text className="text-xl font-semibold mb-2">{currentPlan.name}</Text>
           <Text className="text-gray-600 mb-3">{currentPlan.description}</Text>
           <Text className="text-2xl font-bold text-blue-600 mb-3">
-            {formatPrice(currentPlan.price, currentPlan.currency)}
+            {formatStripePrice(currentPlan.price, currentPlan.currency)}
             <Text className="text-sm text-gray-500">/{currentPlan.interval === 'month' ? 'mês' : 'ano'}</Text>
           </Text>
 

@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Dashboard from '../screens/dashboard';
-import { FontAwesome, MaterialCommunityIcons, MaterialIcons, Octicons } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons, MaterialIcons, Octicons, Ionicons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
 import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import Sessions from '../screens/sessions';
@@ -16,82 +16,50 @@ import PersonalDashboard from '../screens/personalDashboard';
 import EditUserWorkout from '../screens/editUserWorkout';
 import UserWorkoutDetails from '../screens/userWorkoutDetails';
 import SubscriptionScreen from '../screens/subscription';
+import PlanCreation from '../screens/planCreation';
+import PlansManagement from '../screens/plansManagement';
 import { RootStackParamList } from '../types/navigation';
+import { useAuth } from '../contexts/AuthContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator<RootStackParamList>();
 
 function AppTabs() {
+    const { user } = useAuth();
+    
     return (
         <Tab.Navigator
-            screenOptions={{
-                tabBarActiveTintColor: "#b71814",
-                tabBarInactiveTintColor: "#9ba1ad",
-                tabBarLabelPosition: 'below-icon',
-                headerShown: false,
-                tabBarStyle: {
-                    paddingVertical: Platform.OS === 'ios' ? 20 : 0,
-                    height: 70,
-                    backgroundColor: '#202938',
-                    borderTopWidth: 2,
-                    borderTopColor: '#9ba1ad',
-                },
-                animation: 'shift',
-                tabBarHideOnKeyboard: true,
-            }}>
-            <Tab.Screen
-                name='Dashboard'
-                component={Dashboard}
-                options={{
-                    tabBarIcon: (({ size, color }) => (
-                        <MaterialIcons
-                            name="home"
-                            size={size}
-                            color={color}
-                        />
-                    ))
-                }}
-            />
-            <Tab.Screen
-                name='Treinos'
-                component={Sessions}
-                options={{
-                    tabBarIcon: (({ size, color }) => (
-                        <MaterialCommunityIcons
-                            name="weight-lifter"
-                            size={size}
-                            color={color}
-                        />
-                    ))
-                }}
-            />
-            <Tab.Screen
-                name='Progresso'
-                component={Progress}
-                options={{
-                    tabBarIcon: (({ size, color }) => (
-                        <Octicons
-                            name="graph"
-                            size={size}
-                            color={color}
-                        />
-                    ))
-                }}
-            />
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                    let iconName: keyof typeof Ionicons.glyphMap;
 
-            <Tab.Screen
-                name='Profile'
-                component={Profile}
-                options={{
-                    tabBarIcon: (({ size, color }) => (
-                        <FontAwesome
-                            name="user"
-                            size={size}
-                            color={color}
-                        />
-                    ))
-                }}
-            />
+                    if (route.name === 'Dashboard') {
+                        iconName = focused ? 'home' : 'home-outline';
+                    } else if (route.name === 'Treinos') {
+                        iconName = focused ? 'fitness' : 'fitness-outline';
+                    } else if (route.name === 'Progresso') {
+                        iconName = focused ? 'stats-chart' : 'stats-chart-outline';
+                    } else if (route.name === 'Profile') {
+                        iconName = focused ? 'person' : 'person-outline';
+                    } else if (route.name === 'Planos') {
+                        iconName = focused ? 'card' : 'card-outline';
+                    } else {
+                        iconName = 'ellipse-outline';
+                    }
+
+                    return <Ionicons name={iconName} size={size} color={color} />;
+                },
+                tabBarActiveTintColor: '#007AFF',
+                tabBarInactiveTintColor: 'gray',
+                headerShown: false,
+            })}>
+            <Tab.Screen name="Dashboard" component={Dashboard} />
+            <Tab.Screen name="Treinos" component={Sessions} />
+            <Tab.Screen name="Progresso" component={Progress} />
+            <Tab.Screen name="Profile" component={Profile} />
+            {user?.role === 'admin' && (
+                <Tab.Screen name="Planos" component={PlansManagement} />
+            )}
         </Tab.Navigator>
     );
 }
@@ -116,6 +84,8 @@ function Routes() {
                 <Stack.Screen name="EditUserWorkout" component={EditUserWorkout} />
                 <Stack.Screen name="UserWorkoutDetails" component={UserWorkoutDetails} />
                 <Stack.Screen name="Subscription" component={SubscriptionScreen} />
+                <Stack.Screen name="PlanCreation" component={PlanCreation} />
+                <Stack.Screen name="PlansManagement" component={PlansManagement} />
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -1,6 +1,5 @@
 import { SafeAreaView, ScrollView, Text, View, Alert, TouchableOpacity } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { useWindowDimensions } from 'react-native';
 import { useState, useEffect } from 'react';
 import Button from "../../components/ui/button";
 import { useAuth } from "../../contexts/AuthContext";
@@ -8,21 +7,27 @@ import { authService } from "../../services/api";
 import api from "../../services/api";
 import { useNavigation } from '@react-navigation/native';
 import { BodyMeasurements, MeasurementsForm } from "../../components/BodyMeasurements";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { logger } from '../../utils/logger';
+import { formatStripePrice } from '../../utils/priceUtils';
 
 export default function Profile() {
-    const { width } = useWindowDimensions();
     const { user, logout } = useAuth();
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [showMeasurementsForm, setShowMeasurementsForm] = useState(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [measurementsData, setMeasurementsData] = useState<any>(null);
+    const [subscriptionData, setSubscriptionData] = useState<any>(null);
     const navigation = useNavigation();
 
     useEffect(() => {
-        loadUserData();
+        const loadData = async () => {
+            await loadUserData();
+            await loadSubscriptionData();
+        };
+        loadData();
     }, []);
 
     const loadUserData = async () => {
@@ -45,6 +50,32 @@ export default function Profile() {
         } catch (error) {
             logger.error('Erro ao carregar dados do usuário:', error);
             setLoading(false);
+        }
+    };
+
+    const loadSubscriptionData = async () => {
+        try {
+            const token = await AsyncStorage.getItem('@GymApp:token');
+            const userDataLocal = await AsyncStorage.getItem('@GymApp:user');
+            const currentUser = userDataLocal ? JSON.parse(userDataLocal) : user;
+            const userId = currentUser?.id || currentUser?._id;
+
+            if (!userId || !token) {
+                logger.log('Usuário ou token não encontrado para buscar assinatura');
+                return;
+            }
+
+            const response = await api.get(`/payment/subscription/user/${userId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (response.data.subscription) {
+                setSubscriptionData(response.data.subscription);
+            } else {
+                logger.log('Nenhuma assinatura encontrada para o usuário');
+            }
+        } catch (error) {
+            logger.error('Erro ao carregar dados de assinatura:', error);
         }
     };
 
@@ -177,6 +208,60 @@ export default function Profile() {
                                     <Text className="text-gray-400 font-bold font-roboto">Status</Text>
                                     <Text className="text-green-500 font-bold font-roboto">Ativo</Text>
                                 </View>
+
+
+                                {subscriptionData ? (
+                                    <>
+                                        <View className="flex-row justify-between items-center mb-3">
+                                            <Text className="text-gray-400 font-bold font-roboto">Status da Assinatura</Text>
+                                            <Text className={`font-bold font-roboto ${subscriptionData.status === 'active' ? 'text-green-500' :
+                                                subscriptionData.status === 'canceled' || subscriptionData.status === 'inactive' ? 'text-red-500' :
+                                                    subscriptionData.status === 'incomplete' || subscriptionData.status === 'incomplete_expired' ? 'text-yellow-500' :
+                                                        subscriptionData.status === 'trialing' ? 'text-blue-500' :
+                                                            'text-gray-400'
+                                                }`}>
+                                                {subscriptionData.status === 'active' ? 'Ativo' :
+                                                    subscriptionData.status === 'canceled' ? 'Cancelado' :
+                                                        subscriptionData.status === 'inactive' ? 'Inativo' :
+                                                            subscriptionData.status === 'incomplete' ? 'Incompleto' :
+                                                                subscriptionData.status === 'incomplete_expired' ? 'Incompleto (Expirado)' :
+                                                                    subscriptionData.status === 'trialing' ? 'Período de Teste' :
+                                                                        subscriptionData.status}
+                                            </Text>
+                                        </View>
+
+                                        {subscriptionData?.planName && (
+                                            <View className="flex-row justify-between items-center mb-3">
+                                                <Text className="text-gray-400 font-bold font-roboto">Plano</Text>
+                                                <Text className="text-white font-bold font-roboto">{subscriptionData.planName}</Text>
+                                            </View>
+                                        )}
+
+                                        {subscriptionData?.currentPeriodEnd && (
+                                            <View className="flex-row justify-between items-center mb-3">
+                                                <Text className="text-gray-400 font-bold font-roboto">Próxima Cobrança</Text>
+                                                <Text className="text-white font-bold font-roboto">
+                                                    {new Date(subscriptionData.currentPeriodEnd).toLocaleDateString('pt-BR')}
+                                                </Text>
+                                            </View>
+                                        )}
+
+                                        {subscriptionData?.planPrice && (
+                                            <View className="flex-row justify-between items-center mb-3">
+                                                <Text className="text-gray-400 font-bold font-roboto">Valor</Text>
+                                                <Text className="text-white font-bold font-roboto">
+                                                    {formatStripePrice(subscriptionData.planPrice, subscriptionData.currency || 'BRL')}/{subscriptionData.interval === 'month' ? 'mês' : 'ano'}
+                                                </Text>
+                                            </View>
+                                        )}
+                                    </>
+                                ) : (
+                                    <View className="flex-row justify-between items-center mb-3">
+                                        <Text className="text-gray-400 font-bold font-roboto">Status da Assinatura</Text>
+                                        <Text className="text-gray-400 font-bold font-roboto">Nenhuma assinatura ativa</Text>
+                                    </View>
+                                )}
+
                                 <View className="flex-row justify-between items-center mb-3">
                                     <Text className="text-gray-400 font-bold font-roboto">Membro desde</Text>
                                     <Text className="text-white font-bold font-roboto">{userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString('pt-BR') : 'N/A'}</Text>
@@ -227,7 +312,7 @@ export default function Profile() {
 
 
                         <View className="w-full mt-8 mb-6">
-                            {userData?.role === 'personal' && (
+                            {(userData?.role === 'personal' || userData?.role === 'admin') && (
                                 <TouchableOpacity
                                     className="w-full bg-orange-500 rounded-lg p-4 items-center mb-4"
                                     onPress={() => navigation.navigate('PersonalDashboard' as never)}
@@ -239,6 +324,8 @@ export default function Profile() {
                                 </TouchableOpacity>
                             )}
 
+
+
                             <TouchableOpacity
                                 className="w-full bg-[#4abdd4] rounded-lg p-4 items-center mb-4"
                                 onPress={() => navigation.navigate('EditWorkout' as never)}
@@ -249,15 +336,17 @@ export default function Profile() {
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
-                                className="w-full bg-purple-600 rounded-lg p-4 items-center mb-4"
-                                onPress={() => navigation.navigate('Subscription' as never)}
-                            >
-                                <View className="flex-row items-center">
-                                    <MaterialIcons name="star" size={24} color="white" />
-                                    <Text className="text-white font-bold text-lg ml-2 font-roboto">Assinatura Premium</Text>
-                                </View>
-                            </TouchableOpacity>
+                            {!subscriptionData || !['active', 'trialing'].includes(subscriptionData.status) ? (
+                                <TouchableOpacity
+                                    className="w-full bg-purple-600 rounded-lg p-4 items-center mb-4"
+                                    onPress={() => navigation.navigate('Subscription' as never)}
+                                >
+                                    <View className="flex-row items-center">
+                                        <MaterialIcons name="star" size={24} color="white" />
+                                        <Text className="text-white font-bold text-lg ml-2 font-roboto">Assinatura Premium</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ) : null}
 
                             <TouchableOpacity
                                 className="w-full bg-red-600 rounded-lg p-4 items-center"

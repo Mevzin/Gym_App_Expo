@@ -4,6 +4,7 @@ import { Card } from '../ui/card';
 import Button from '../ui/button';
 import api from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { formatStripePrice } from '../../utils/priceUtils';
 
 interface Subscription {
   _id: string;
@@ -51,7 +52,7 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
       if (error.response?.status !== 404) {
         console.error('Erro ao buscar assinatura:', error);
       }
-      // Se não há assinatura (404), mantém subscription como null
+      
     } finally {
       setLoading(false);
     }
@@ -85,7 +86,7 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
                 'Sua assinatura foi cancelada com sucesso. Você ainda terá acesso aos recursos premium até o final do período atual.'
               );
 
-              // Atualizar dados da assinatura
+        
               await fetchSubscription();
               onSubscriptionChange?.();
             } catch (error: any) {
@@ -103,11 +104,8 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
     );
   };
 
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(price / 100);
+  const formatPriceWithCurrency = (price: number, currency: string) => {
+    return formatStripePrice(price, currency.toUpperCase());
   };
 
   const formatDate = (date: Date | string) => {
@@ -204,7 +202,7 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
 
           <View className="items-end">
             <Text className="text-2xl font-bold text-blue-600">
-              {formatPrice(subscription.planPrice, subscription.currency)}
+              {formatPriceWithCurrency(subscription.planPrice, subscription.currency)}
             </Text>
             <Text className="text-sm text-gray-500">
               /{subscription.interval === 'month' ? 'mês' : 'ano'}

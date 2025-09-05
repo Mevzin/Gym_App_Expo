@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from './api';
+import { formatStripePrice as formatPriceUtil } from '../utils/priceUtils';
 
 export interface Plan {
   _id: string;
@@ -59,7 +60,7 @@ class PaymentService {
     };
   }
 
-  // Planos
+
   async getPlans(): Promise<Plan[]> {
     try {
       const headers = await this.getAuthHeaders();
@@ -82,19 +83,27 @@ class PaymentService {
     }
   }
 
-  // Cliente Stripe
+
   async createCustomer(): Promise<{ customerId: string }> {
     try {
       const headers = await this.getAuthHeaders();
-      const response = await api.post('/payment/create-customer', {}, { headers });
+      const userData = await AsyncStorage.getItem('@GymApp:user');
+      const user = userData ? JSON.parse(userData) : null;
+      const userId = user?.id || user?._id;
+
+      if (!userId) {
+        throw new Error('Usuário não encontrado');
+      }
+
+      const response = await api.post('/payment/customer', { userId }, { headers });
       return response.data;
     } catch (error) {
-      console.error('Erro ao criar cliente:', error);
+      console.error('Erro ao criar customer:', error);
       throw error;
     }
   }
 
-  // Assinaturas
+
   async createSubscription(planId: string): Promise<{
     subscriptionId: string;
     clientSecret: string;
@@ -102,7 +111,7 @@ class PaymentService {
   }> {
     try {
       const headers = await this.getAuthHeaders();
-      const response = await api.post('/payment/create-subscription',
+      const response = await api.post('/payment/subscription',
         { planId },
         { headers }
       );
@@ -116,21 +125,29 @@ class PaymentService {
   async getSubscription(): Promise<Subscription | null> {
     try {
       const headers = await this.getAuthHeaders();
-      const response = await api.get('/payment/subscription', { headers });
-      return response.data;
+      const userData = await AsyncStorage.getItem('@GymApp:user');
+      const user = userData ? JSON.parse(userData) : null;
+      const userId = user?.id || user?._id;
+
+      if (!userId) {
+        throw new Error('Usuário não encontrado');
+      }
+
+      const response = await api.get(`/payment/subscription/user/${userId}`, { headers });
+      return response.data.subscription;
     } catch (error: any) {
       if (error.response?.status === 404) {
-        return null; // Usuário não tem assinatura
+        return null;
       }
       console.error('Erro ao buscar assinatura:', error);
       throw error;
     }
   }
 
-  async cancelSubscription(): Promise<{ message: string }> {
+  async cancelSubscription(subscriptionId: string): Promise<{ message: string }> {
     try {
       const headers = await this.getAuthHeaders();
-      const response = await api.post('/payment/cancel-subscription', {}, { headers });
+      const response = await api.patch(`/payment/subscription/${subscriptionId}/cancel`, {}, { headers });
       return response.data;
     } catch (error) {
       console.error('Erro ao cancelar assinatura:', error);
@@ -138,19 +155,10 @@ class PaymentService {
     }
   }
 
-  // Métodos de pagamento
-  async createSetupIntent(): Promise<{ clientSecret: string }> {
-    try {
-      const headers = await this.getAuthHeaders();
-      const response = await api.post('/payment/setup-intent', {}, { headers });
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao criar setup intent:', error);
-      throw error;
-    }
-  }
 
-  // Histórico de pagamentos
+
+
+
   async getPaymentHistory(): Promise<Payment[]> {
     try {
       const headers = await this.getAuthHeaders();
@@ -162,7 +170,7 @@ class PaymentService {
     }
   }
 
-  // Faturas
+
   async getInvoices(): Promise<any[]> {
     try {
       const headers = await this.getAuthHeaders();
@@ -174,12 +182,9 @@ class PaymentService {
     }
   }
 
-  // Utilitários
+
   formatPrice(price: number, currency: string): string {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(price / 100);
+    return formatPriceUtil(price, currency.toUpperCase());
   }
 
   formatDate(date: Date | string): string {
