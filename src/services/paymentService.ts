@@ -18,7 +18,7 @@ export interface Plan {
   updatedAt: Date;
 }
 
-export interface Subscription {
+export interface MonthlyPayment {
   _id: string;
   userId: string;
   stripeCustomerId: string;
@@ -37,7 +37,7 @@ export interface Subscription {
 export interface Payment {
   _id: string;
   userId: string;
-  subscriptionId?: string;
+  monthlyPaymentId?: string;
   stripePaymentIntentId: string;
   stripeInvoiceId?: string;
   amount: number;
@@ -104,25 +104,25 @@ class PaymentService {
   }
 
 
-  async createSubscription(planId: string): Promise<{
+  async createMonthlyPayment(planId: string): Promise<{
     subscriptionId: string;
     clientSecret: string;
     status: string;
   }> {
     try {
       const headers = await this.getAuthHeaders();
-      const response = await api.post('/payment/subscription',
+      const response = await api.post('/payment/monthly-payment',
         { planId },
         { headers }
       );
       return response.data;
     } catch (error) {
-      console.error('Erro ao criar assinatura:', error);
+      console.error('Erro ao criar mensalidade:', error);
       throw error;
     }
   }
 
-  async getSubscription(): Promise<Subscription | null> {
+  async getMonthlyPayment(): Promise<MonthlyPayment | null> {
     try {
       const headers = await this.getAuthHeaders();
       const userData = await AsyncStorage.getItem('@GymApp:user');
@@ -133,24 +133,24 @@ class PaymentService {
         throw new Error('Usuário não encontrado');
       }
 
-      const response = await api.get(`/payment/subscription/user/${userId}`, { headers });
+      const response = await api.get(`/payment/monthly-payment/user/${userId}`, { headers });
       return response.data.subscription;
     } catch (error: any) {
       if (error.response?.status === 404) {
         return null;
       }
-      console.error('Erro ao buscar assinatura:', error);
+      console.error('Erro ao buscar mensalidade:', error);
       throw error;
     }
   }
 
-  async cancelSubscription(subscriptionId: string): Promise<{ message: string }> {
+  async cancelMonthlyPayment(subscriptionId: string): Promise<{ message: string }> {
     try {
       const headers = await this.getAuthHeaders();
-      const response = await api.patch(`/payment/subscription/${subscriptionId}/cancel`, {}, { headers });
+      const response = await api.patch(`/payment/monthly-payment/${subscriptionId}/cancel`, {}, { headers });
       return response.data;
     } catch (error) {
-      console.error('Erro ao cancelar assinatura:', error);
+      console.error('Erro ao cancelar mensalidade:', error);
       throw error;
     }
   }
@@ -233,12 +233,12 @@ class PaymentService {
     return colorMap[status] || 'text-gray-600';
   }
 
-  isSubscriptionActive(subscription: Subscription | null): boolean {
-    return subscription ? ['active', 'trialing'].includes(subscription.status) : false;
+  isMonthlyPaymentActive(monthlyPayment: MonthlyPayment | null): boolean {
+    return monthlyPayment ? ['active', 'trialing'].includes(monthlyPayment.status) : false;
   }
 
-  canCancelSubscription(subscription: Subscription | null): boolean {
-    return subscription ? subscription.status !== 'canceled' : false;
+  canCancelMonthlyPayment(monthlyPayment: MonthlyPayment | null): boolean {
+    return monthlyPayment ? monthlyPayment.status !== 'canceled' : false;
   }
 
   calculateYearlySavings(monthlyPlan: Plan, yearlyPlan: Plan): number {
@@ -246,9 +246,9 @@ class PaymentService {
     return monthlyYearlyTotal - yearlyPlan.price;
   }
 
-  getDaysUntilPeriodEnd(subscription: Subscription): number {
+  getDaysUntilPeriodEnd(monthlyPayment: MonthlyPayment): number {
     const now = new Date();
-    const periodEnd = new Date(subscription.currentPeriodEnd);
+    const periodEnd = new Date(monthlyPayment.currentPeriodEnd);
     const diffTime = periodEnd.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return Math.max(0, diffDays);

@@ -29,7 +29,7 @@ export type RootStackParamList = {
   UserWorkoutDetails: {
     user: User;
   };
-  Subscription: undefined;
+  MonthlyPayment: undefined;
   PlanCreation: undefined;
   PlansManagement: undefined;
 };
@@ -42,10 +42,10 @@ export interface EditUserWorkoutProps {
   route: EditUserWorkoutRouteProp;
 }
 
-export type SubscriptionNavigationProp = StackNavigationProp<RootStackParamList, 'Subscription'>;
-export type SubscriptionRouteProp = RouteProp<RootStackParamList, 'Subscription'>;
+export type MonthlyPaymentNavigationProp = StackNavigationProp<RootStackParamList, 'MonthlyPayment'>;
+export type MonthlyPaymentRouteProp = RouteProp<RootStackParamList, 'MonthlyPayment'>;
 
-export interface SubscriptionProps {
-  navigation: SubscriptionNavigationProp;
-  route: SubscriptionRouteProp;
+export interface MonthlyPaymentProps {
+  navigation: MonthlyPaymentNavigationProp;
+  route: MonthlyPaymentRouteProp;
 }

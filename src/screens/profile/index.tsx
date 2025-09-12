@@ -20,13 +20,13 @@ export default function Profile() {
     const [showMeasurementsForm, setShowMeasurementsForm] = useState(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [measurementsData, setMeasurementsData] = useState<any>(null);
-    const [subscriptionData, setSubscriptionData] = useState<any>(null);
+    const [monthlyPaymentData, setMonthlyPaymentData] = useState<any>(null);
     const navigation = useNavigation();
 
     useEffect(() => {
         const loadData = async () => {
             await loadUserData();
-            await loadSubscriptionData();
+            await loadMonthlyPaymentData();
         };
         loadData();
     }, []);
@@ -54,7 +54,7 @@ export default function Profile() {
         }
     };
 
-    const loadSubscriptionData = async () => {
+    const loadMonthlyPaymentData = async () => {
         try {
             const token = await AsyncStorage.getItem('@GymApp:token');
             const userDataLocal = await AsyncStorage.getItem('@GymApp:user');
@@ -62,32 +62,32 @@ export default function Profile() {
             const userId = currentUser?.id || currentUser?._id;
 
             if (!userId || !token) {
-                logger.log('Usuário ou token não encontrado para buscar assinatura');
+                logger.log('Usuário ou token não encontrado para buscar mensalidade');
                 return;
             }
 
-            const response = await api.get(`/payment/subscription/user/${userId}`, {
+            const response = await api.get(`/payment/monthly-payment/user/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
             if (response.data.subscription) {
-                setSubscriptionData(response.data.subscription);
+                setMonthlyPaymentData(response.data.subscription);
             } else {
-                logger.log('Nenhuma assinatura encontrada para o usuário');
+                logger.log('Nenhuma mensalidade encontrada para o usuário');
             }
         } catch (error) {
-            logger.error('Erro ao carregar dados de assinatura:', error);
+            logger.error('Erro ao carregar dados de mensalidade:', error);
         }
     };
 
 
 
-    const handleCancelSubscription = () => {
-        if (!subscriptionData) return;
+    const handleCancelMonthlyPayment = () => {
+        if (!monthlyPaymentData) return;
 
         Alert.alert(
-            'Cancelar Assinatura',
-            'Tem certeza que deseja cancelar sua assinatura? Você ainda terá acesso aos recursos premium até o final do período atual.',
+            'Cancelar Mensalidade',
+            'Tem certeza que deseja cancelar sua mensalidade? Você ainda terá acesso aos recursos premium até o final do período atual.',
             [
                 {
                     text: 'Não',
@@ -98,18 +98,18 @@ export default function Profile() {
                     style: 'destructive',
                     onPress: async () => {
                         try {
-                            await paymentService.cancelSubscription(subscriptionData.stripeSubscriptionId);
+                            await paymentService.cancelMonthlyPayment(monthlyPaymentData.stripeSubscriptionId);
                             Alert.alert(
-                                'Assinatura Cancelada',
-                                'Sua assinatura foi cancelada com sucesso. Você ainda terá acesso aos recursos premium até o final do período atual.'
+                                'Mensalidade Cancelada',
+                                'Sua mensalidade foi cancelada com sucesso. Você ainda terá acesso aos recursos premium até o final do período atual.'
                             );
 
-                            await loadSubscriptionData();
+                            await loadMonthlyPaymentData();
                         } catch (error: any) {
-                            console.error('Erro ao cancelar assinatura:', error);
+                            console.error('Erro ao cancelar mensalidade:', error);
                             Alert.alert(
                                 'Erro',
-                                error.response?.data?.message || 'Erro ao cancelar assinatura'
+                                error.response?.data?.message || 'Erro ao cancelar mensalidade'
                             );
                         }
                     }
@@ -247,67 +247,67 @@ export default function Profile() {
                                 </View>
 
 
-                                {subscriptionData ? (
+                                {monthlyPaymentData ? (
                                     <>
                                         <View className="flex-row justify-between items-center mb-3">
-                                            <Text className="text-gray-400 font-bold font-roboto">Status da Assinatura</Text>
-                                            <Text className={`font-bold font-roboto ${subscriptionData.status === 'active' ? 'text-green-500' :
-                                                subscriptionData.status === 'canceled' || subscriptionData.status === 'inactive' ? 'text-red-500' :
-                                                    subscriptionData.status === 'incomplete' || subscriptionData.status === 'incomplete_expired' ? 'text-yellow-500' :
-                                                        subscriptionData.status === 'trialing' ? 'text-blue-500' :
+                                            <Text className="text-gray-400 font-bold font-roboto">Status da Mensalidade</Text>
+                                            <Text className={`font-bold font-roboto ${monthlyPaymentData.status === 'active' ? 'text-green-500' :
+                                                monthlyPaymentData.status === 'canceled' || monthlyPaymentData.status === 'inactive' ? 'text-red-500' :
+                                                    monthlyPaymentData.status === 'incomplete' || monthlyPaymentData.status === 'incomplete_expired' ? 'text-yellow-500' :
+                                                        monthlyPaymentData.status === 'trialing' ? 'text-blue-500' :
                                                             'text-gray-400'
                                                 }`}>
-                                                {subscriptionData.status === 'active' ? 'Ativo' :
-                                                    subscriptionData.status === 'canceled' ? 'Cancelado' :
-                                                        subscriptionData.status === 'inactive' ? 'Inativo' :
-                                                            subscriptionData.status === 'incomplete' ? 'Incompleto' :
-                                                                subscriptionData.status === 'incomplete_expired' ? 'Incompleto (Expirado)' :
-                                                                    subscriptionData.status === 'trialing' ? 'Período de Teste' :
-                                                                        subscriptionData.status}
+                                                {monthlyPaymentData.status === 'active' ? 'Ativo' :
+                                                    monthlyPaymentData.status === 'canceled' ? 'Cancelado' :
+                                                        monthlyPaymentData.status === 'inactive' ? 'Inativo' :
+                                                            monthlyPaymentData.status === 'incomplete' ? 'Incompleto' :
+                                                                monthlyPaymentData.status === 'incomplete_expired' ? 'Incompleto (Expirado)' :
+                                                                    monthlyPaymentData.status === 'trialing' ? 'Período de Teste' :
+                                                                        monthlyPaymentData.status}
                                             </Text>
                                         </View>
 
-                                        {subscriptionData?.planName && (
+                                        {monthlyPaymentData?.planName && (
                                             <View className="flex-row justify-between items-center mb-3">
                                                 <Text className="text-gray-400 font-bold font-roboto">Plano</Text>
-                                                <Text className="text-white font-bold font-roboto">{subscriptionData.planName}</Text>
+                                                <Text className="text-white font-bold font-roboto">{monthlyPaymentData.planName}</Text>
                                             </View>
                                         )}
 
-                                        {subscriptionData?.currentPeriodEnd && (
+                                        {monthlyPaymentData?.currentPeriodEnd && (
                                             <View className="flex-row justify-between items-center mb-3">
                                                 <Text className="text-gray-400 font-bold font-roboto">Próxima Cobrança</Text>
                                                 <Text className="text-white font-bold font-roboto">
-                                                    {new Date(subscriptionData.currentPeriodEnd).toLocaleDateString('pt-BR')}
+                                                    {new Date(monthlyPaymentData.currentPeriodEnd).toLocaleDateString('pt-BR')}
                                                 </Text>
                                             </View>
                                         )}
 
-                                        {subscriptionData?.planPrice && (
+                                        {monthlyPaymentData?.planPrice && (
                                             <View className="flex-row justify-between items-center mb-1">
                                                 <Text className="text-gray-400 font-bold font-roboto">Valor</Text>
                                                 <Text className="text-white font-bold font-roboto">
-                                                    {formatStripePrice(subscriptionData.planPrice, subscriptionData.currency || 'BRL')}/{subscriptionData.interval === 'month' ? 'mês' : 'ano'}
+                                                    {formatStripePrice(monthlyPaymentData.planPrice, monthlyPaymentData.currency || 'BRL')}/{monthlyPaymentData.interval === 'month' ? 'mês' : 'ano'}
                                                 </Text>
                                             </View>
                                         )}
 
-                                        {paymentService.canCancelSubscription(subscriptionData) && (
+                                        {paymentService.canCancelMonthlyPayment(monthlyPaymentData) && (
                                             <TouchableOpacity
                                                 className="w-full bg-red-600 rounded-lg p-3 items-center my-2"
-                                                onPress={handleCancelSubscription}
+                                                onPress={handleCancelMonthlyPayment}
                                             >
                                                 <View className="flex-row items-center">
                                                     <MaterialIcons name="cancel" size={20} color="white" />
-                                                    <Text className="text-white font-bold text-sm ml-2 font-roboto">Cancelar Assinatura</Text>
+                                                    <Text className="text-white font-bold text-sm ml-2 font-roboto">Cancelar Mensalidade</Text>
                                                 </View>
                                             </TouchableOpacity>
                                         )}
                                     </>
                                 ) : (
                                     <View className="flex-row justify-between items-center mb-3">
-                                        <Text className="text-gray-400 font-bold font-roboto">Status da Assinatura</Text>
-                                        <Text className="text-gray-400 font-bold font-roboto">Nenhuma assinatura ativa</Text>
+                                        <Text className="text-gray-400 font-bold font-roboto">Status da Mensalidade</Text>
+                                        <Text className="text-gray-400 font-bold font-roboto">Nenhuma mensalidade ativa</Text>
                                     </View>
                                 )}
 
@@ -385,14 +385,14 @@ export default function Profile() {
                                 </View>
                             </TouchableOpacity>
 
-                            {!subscriptionData || !['active', 'trialing'].includes(subscriptionData.status) ? (
+                            {!monthlyPaymentData || !['active', 'trialing'].includes(monthlyPaymentData.status) ? (
                                 <TouchableOpacity
                                     className="w-full bg-purple-600 rounded-lg p-4 items-center mb-4"
-                                    onPress={() => navigation.navigate('Subscription' as never)}
+                                    onPress={() => navigation.navigate('MonthlyPayment' as never)}
                                 >
                                     <View className="flex-row items-center">
                                         <MaterialIcons name="star" size={24} color="white" />
-                                        <Text className="text-white font-bold text-lg ml-2 font-roboto">Assinatura Premium</Text>
+                                        <Text className="text-white font-bold text-lg ml-2 font-roboto">Mensalidade Premium</Text>
                                     </View>
                                 </TouchableOpacity>
                             ) : null}

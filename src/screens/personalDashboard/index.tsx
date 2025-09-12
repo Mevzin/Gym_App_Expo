@@ -26,7 +26,7 @@ interface User {
   role: string;
   interval: number;
   fileId?: string;
-  subscriptionStatus?: string;
+  monthlyPaymentStatus?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -184,9 +184,9 @@ export default function PersonalDashboard({ navigation }: PersonalDashboardProps
 
 
     if (paymentFilter === 'paid') {
-      filtered = filtered.filter(user => user.subscriptionStatus === 'active');
+      filtered = filtered.filter(user => user.monthlyPaymentStatus === 'active');
     } else if (paymentFilter === 'unpaid') {
-      filtered = filtered.filter(user => user.subscriptionStatus !== 'active');
+      filtered = filtered.filter(user => user.monthlyPaymentStatus !== 'active');
     }
 
     setFilteredUsers(filtered);
@@ -255,9 +255,9 @@ export default function PersonalDashboard({ navigation }: PersonalDashboardProps
                 <Text className="text-xs text-white font-medium">Sem treino</Text>
               </View>
             )}
-            <View className={`px-2 py-1 rounded mb-1 ${getStatusBadgeColor(item.subscriptionStatus)}`}>
+            <View className={`px-2 py-1 rounded mb-1 ${getStatusBadgeColor(item.monthlyPaymentStatus)}`}>
               <Text className="text-xs font-medium text-white">
-                {getStatusBadgeText(item.subscriptionStatus)}
+                {getStatusBadgeText(item.monthlyPaymentStatus)}
               </Text>
             </View>
           </View>

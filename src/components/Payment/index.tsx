@@ -53,7 +53,7 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
     }
   };
 
-  const createSubscription = async () => {
+  const createMonthlyPayment = async () => {
     if (!selectedPlanId) {
       Alert.alert('Erro', 'Selecione um plano para continuar');
       return;
@@ -92,7 +92,7 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
       }
 
   
-      const subscriptionResponse = await api.post('/payment/subscription', {
+      const subscriptionResponse = await api.post('/payment/monthly-payment', {
         planId: selectedPlanId,
         paymentMethodId: paymentMethod.id,
       }, {
@@ -118,11 +118,11 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
         onPaymentError?.(error.message || 'Erro no pagamento');
         Alert.alert('Erro no Pagamento', error.message || 'Ocorreu um erro durante o pagamento');
       } else {
-        Alert.alert('Sucesso!', 'Assinatura criada com sucesso!');
+        Alert.alert('Sucesso!', 'Mensalidade criada com sucesso!');
         onPaymentSuccess?.();
       }
     } catch (error: any) {
-      console.error('Erro ao criar assinatura:', error);
+      console.error('Erro ao criar mensalidade:', error);
       const errorMessage = error.response?.data?.message || 'Erro ao processar pagamento';
       onPaymentError?.(errorMessage);
       Alert.alert('Erro', errorMessage);
@@ -137,7 +137,7 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
 
   return (
     <View className="p-4">
-      <Text className="text-2xl font-bold text-center mb-6">Assinatura Premium</Text>
+      <Text className="text-2xl font-bold text-center mb-6">Mensalidade Premium</Text>
 
       {currentPlan && (
         <Card className="mb-6 p-4">
@@ -193,7 +193,7 @@ export const PaymentComponent: React.FC<PaymentComponentProps> = ({
       </Card>
 
       <Button
-        onPress={createSubscription}
+        onPress={createMonthlyPayment}
         disabled={loading || !cardDetails?.complete}
         className="w-full"
       >

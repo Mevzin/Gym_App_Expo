@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import PlanSelector from '../../components/PlanSelector';
 import PaymentComponent from '../../components/Payment';
-import SubscriptionManager from '../../components/SubscriptionManager';
+import MonthlyPaymentManager from '../../components/MonthlyPaymentManager';
 import Button from '../../components/ui/button';
 import api from '../../services/api';
 
@@ -24,34 +24,34 @@ interface Plan {
   trialPeriodDays?: number;
 }
 
-type SubscriptionStep = 'view' | 'plans' | 'payment';
+type MonthlyPaymentStep = 'view' | 'plans' | 'payment';
 
-export default function SubscriptionScreen() {
+export default function MonthlyPaymentScreen() {
   const navigation = useNavigation();
-  const [currentStep, setCurrentStep] = useState<SubscriptionStep>('view');
+  const [currentStep, setCurrentStep] = useState<MonthlyPaymentStep>('view');
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [hasSubscription, setHasSubscription] = useState<boolean | null>(null);
+  const [hasMonthlyPayment, setHasMonthlyPayment] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkSubscriptionStatus();
+    checkMonthlyPaymentStatus();
   }, []);
 
-  const checkSubscriptionStatus = async () => {
+  const checkMonthlyPaymentStatus = async () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('@GymApp:token');
-      const response = await api.get('/payment/subscription', {
+      const response = await api.get('/payment/monthly-payment', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setHasSubscription(!!response.data);
+      setHasMonthlyPayment(!!response.data);
     } catch (error: any) {
       if (error.response?.status === 404) {
-        setHasSubscription(false);
+        setHasMonthlyPayment(false);
       } else {
-        console.error('Erro ao verificar assinatura:', error);
-        setHasSubscription(false);
+        console.error('Erro ao verificar mensalidade:', error);
+        setHasMonthlyPayment(false);
       }
     } finally {
       setLoading(false);
@@ -65,7 +65,7 @@ export default function SubscriptionScreen() {
   const handlePaymentSuccess = () => {
     Alert.alert(
       'Sucesso!',
-      'Sua assinatura foi criada com sucesso!',
+      'Sua mensalidade foi criada com sucesso!',
       [
         {
           text: 'OK',
@@ -82,15 +82,15 @@ export default function SubscriptionScreen() {
     Alert.alert('Erro no Pagamento', error);
   };
 
-  const handleSubscriptionChange = () => {
-    checkSubscriptionStatus();
-    if (!hasSubscription) {
+  const handleMonthlyPaymentChange = () => {
+    checkMonthlyPaymentStatus();
+    if (!hasMonthlyPayment) {
       setCurrentStep('plans');
     }
   };
 
   const renderStepIndicator = () => {
-    if (hasSubscription || currentStep === 'view') return null;
+    if (hasMonthlyPayment || currentStep === 'view') return null;
 
     return (
       <View className="flex-row justify-center items-center mb-6 px-4">
@@ -131,8 +131,8 @@ export default function SubscriptionScreen() {
     switch (currentStep) {
       case 'view':
         return (
-          <SubscriptionManager
-            onSubscriptionChange={handleSubscriptionChange}
+          <MonthlyPaymentManager
+            onMonthlyPaymentChange={handleMonthlyPaymentChange}
           />
         );
 
@@ -218,7 +218,7 @@ export default function SubscriptionScreen() {
         </Button>
 
         <Text className="text-lg font-semibold">
-          {currentStep === 'view' ? 'Assinatura' :
+          {currentStep === 'view' ? 'Mensalidade' :
             currentStep === 'plans' ? 'Escolher Plano' : 'Pagamento'}
         </Text>
 

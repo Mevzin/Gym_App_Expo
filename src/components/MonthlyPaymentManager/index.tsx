@@ -6,7 +6,7 @@ import api from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { formatStripePrice } from '../../utils/priceUtils';
 
-interface Subscription {
+interface MonthlyPayment {
   _id: string;
   userId: string;
   stripeCustomerId: string;
@@ -22,22 +22,22 @@ interface Subscription {
   updatedAt: Date;
 }
 
-interface SubscriptionManagerProps {
-  onSubscriptionChange?: () => void;
+interface MonthlyPaymentManagerProps {
+  onMonthlyPaymentChange?: () => void;
 }
 
-export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
-  onSubscriptionChange,
+export const MonthlyPaymentManager: React.FC<MonthlyPaymentManagerProps> = ({
+  onMonthlyPaymentChange,
 }) => {
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [monthlyPayment, setMonthlyPayment] = useState<MonthlyPayment | null>(null);
   const [loading, setLoading] = useState(true);
   const [canceling, setCanceling] = useState(false);
 
   useEffect(() => {
-    fetchSubscription();
+    fetchMonthlyPayment();
   }, []);
 
-  const fetchSubscription = async () => {
+  const fetchMonthlyPayment = async () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('@GymApp:token');
@@ -46,11 +46,11 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
       });
 
       if (response.data) {
-        setSubscription(response.data);
+        setMonthlyPayment(response.data);
       }
     } catch (error: any) {
       if (error.response?.status !== 404) {
-        console.error('Erro ao buscar assinatura:', error);
+        console.error('Erro ao buscar mensalidade:', error);
       }
       
     } finally {
@@ -58,12 +58,12 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
     }
   };
 
-  const cancelSubscription = async () => {
-    if (!subscription) return;
+  const cancelMonthlyPayment = async () => {
+    if (!monthlyPayment) return;
 
     Alert.alert(
-      'Cancelar Assinatura',
-      'Tem certeza que deseja cancelar sua assinatura? Você ainda terá acesso aos recursos premium até o final do período atual.',
+      'Cancelar Mensalidade',
+      'Tem certeza que deseja cancelar sua mensalidade? Você ainda terá acesso aos recursos premium até o final do período atual.',
       [
         {
           text: 'Não',
@@ -82,18 +82,18 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
               });
 
               Alert.alert(
-                'Assinatura Cancelada',
-                'Sua assinatura foi cancelada com sucesso. Você ainda terá acesso aos recursos premium até o final do período atual.'
+                'Mensalidade Cancelada',
+                'Sua mensalidade foi cancelada com sucesso. Você ainda terá acesso aos recursos premium até o final do período atual.'
               );
 
         
-              await fetchSubscription();
-              onSubscriptionChange?.();
+              await fetchMonthlyPayment();
+              onMonthlyPaymentChange?.();
             } catch (error: any) {
-              console.error('Erro ao cancelar assinatura:', error);
+              console.error('Erro ao cancelar mensalidade:', error);
               Alert.alert(
                 'Erro',
-                error.response?.data?.message || 'Erro ao cancelar assinatura'
+                error.response?.data?.message || 'Erro ao cancelar mensalidade'
               );
             } finally {
               setCanceling(false);
@@ -149,35 +149,35 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
     }
   };
 
-  const isSubscriptionActive = () => {
-    return subscription && ['active', 'trialing'].includes(subscription.status);
+  const isMonthlyPaymentActive = () => {
+    return monthlyPayment && ['active', 'trialing'].includes(monthlyPayment.status);
   };
 
-  const canCancelSubscription = () => {
-    return subscription && subscription.status !== 'canceled';
+  const canCancelMonthlyPayment = () => {
+    return monthlyPayment && monthlyPayment.status !== 'canceled';
   };
 
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center p-4">
         <ActivityIndicator size="large" color="#3B82F6" />
-        <Text className="mt-4 text-gray-600">Carregando assinatura...</Text>
+        <Text className="mt-4 text-gray-600">Carregando mensalidade...</Text>
       </View>
     );
   }
 
-  if (!subscription) {
+  if (!monthlyPayment) {
     return (
       <View className="flex-1 justify-center items-center p-4">
         <Text className="text-xl font-semibold text-gray-800 mb-4 text-center">
-          Você não possui uma assinatura ativa
+          Você não possui uma mensalidade ativa
         </Text>
         <Text className="text-gray-600 text-center mb-6">
           Assine um plano premium para ter acesso a recursos exclusivos
         </Text>
         <View className="w-full max-w-sm">
           <Button
-            onPress={() => onSubscriptionChange?.()}
+            onPress={() => onMonthlyPaymentChange?.()}
             className="w-full"
           >
             <Text className="text-white font-semibold">Ver Planos Disponíveis</Text>
@@ -189,23 +189,23 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
 
   return (
     <ScrollView className="flex-1 p-4">
-      <Text className="text-2xl font-bold text-center mb-6">Minha Assinatura</Text>
+      <Text className="text-2xl font-bold text-center mb-6">Minha Mensalidade</Text>
 
       <Card className="p-6 mb-6">
         <View className="flex-row justify-between items-start mb-4">
           <View className="flex-1">
-            <Text className="text-xl font-bold mb-2">{subscription.planName}</Text>
-            <Text className={`text-lg font-semibold ${getStatusColor(subscription.status)}`}>
-              {getStatusText(subscription.status)}
+            <Text className="text-xl font-bold mb-2">{monthlyPayment.planName}</Text>
+            <Text className={`text-lg font-semibold ${getStatusColor(monthlyPayment.status)}`}>
+              {getStatusText(monthlyPayment.status)}
             </Text>
           </View>
 
           <View className="items-end">
             <Text className="text-2xl font-bold text-blue-600">
-              {formatPriceWithCurrency(subscription.planPrice, subscription.currency)}
+              {formatPriceWithCurrency(monthlyPayment.planPrice, monthlyPayment.currency)}
             </Text>
             <Text className="text-sm text-gray-500">
-              /{subscription.interval === 'month' ? 'mês' : 'ano'}
+              /{monthlyPayment.interval === 'month' ? 'mês' : 'ano'}
             </Text>
           </View>
         </View>
@@ -214,63 +214,63 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
           <View className="flex-row justify-between mb-2">
             <Text className="text-gray-600">Início do período:</Text>
             <Text className="font-medium">
-              {formatDate(subscription.currentPeriodStart)}
+              {formatDate(monthlyPayment.currentPeriodStart)}
             </Text>
           </View>
 
           <View className="flex-row justify-between mb-2">
             <Text className="text-gray-600">Fim do período:</Text>
             <Text className="font-medium">
-              {formatDate(subscription.currentPeriodEnd)}
+              {formatDate(monthlyPayment.currentPeriodEnd)}
             </Text>
           </View>
 
           <View className="flex-row justify-between">
-            <Text className="text-gray-600">Assinatura desde:</Text>
+            <Text className="text-gray-600">Mensalidade desde:</Text>
             <Text className="font-medium">
-              {formatDate(subscription.createdAt)}
+              {formatDate(monthlyPayment.createdAt)}
             </Text>
           </View>
         </View>
       </Card>
 
-      {isSubscriptionActive() && (
+      {isMonthlyPaymentActive() && (
         <Card className="p-4 mb-6 bg-green-50 border-green-200">
           <Text className="text-green-800 font-semibold text-center mb-2">
-            ✓ Assinatura Ativa
+            ✓ Mensalidade Ativa
           </Text>
           <Text className="text-green-700 text-center text-sm">
-            Você tem acesso a todos os recursos premium até {formatDate(subscription.currentPeriodEnd)}
+            Você tem acesso a todos os recursos premium até {formatDate(monthlyPayment.currentPeriodEnd)}
           </Text>
         </Card>
       )}
 
-      {subscription.status === 'canceled' && (
+      {monthlyPayment.status === 'canceled' && (
         <Card className="p-4 mb-6 bg-orange-50 border-orange-200">
           <Text className="text-orange-800 font-semibold text-center mb-2">
-            ⚠️ Assinatura Cancelada
+            ⚠️ Mensalidade Cancelada
           </Text>
           <Text className="text-orange-700 text-center text-sm">
-            Sua assinatura foi cancelada, mas você ainda tem acesso aos recursos premium até {formatDate(subscription.currentPeriodEnd)}
+            Sua mensalidade foi cancelada, mas você ainda tem acesso aos recursos premium até {formatDate(monthlyPayment.currentPeriodEnd)}
           </Text>
         </Card>
       )}
 
-      {subscription.status === 'past_due' && (
+      {monthlyPayment.status === 'past_due' && (
         <Card className="p-4 mb-6 bg-red-50 border-red-200">
           <Text className="text-red-800 font-semibold text-center mb-2">
             ❌ Pagamento Atrasado
           </Text>
           <Text className="text-red-700 text-center text-sm">
-            Há um problema com o pagamento da sua assinatura. Por favor, atualize seu método de pagamento.
+            Há um problema com o pagamento da sua mensalidade. Por favor, atualize seu método de pagamento.
           </Text>
         </Card>
       )}
 
       <View className="space-y-3">
-        {canCancelSubscription() && (
+        {canCancelMonthlyPayment() && (
           <Button
-            onPress={cancelSubscription}
+            onPress={cancelMonthlyPayment}
             disabled={canceling}
             className="w-full bg-red-600"
           >
@@ -280,13 +280,13 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
                 <Text className="text-white font-semibold">Cancelando...</Text>
               </View>
             ) : (
-              <Text className="text-white font-semibold">Cancelar Assinatura</Text>
+              <Text className="text-white font-semibold">Cancelar Mensalidade</Text>
             )}
           </Button>
         )}
 
         <Button
-          onPress={fetchSubscription}
+          onPress={fetchMonthlyPayment}
           className="w-full bg-gray-600"
         >
           <Text className="text-white font-semibold">Atualizar Informações</Text>
@@ -305,4 +305,4 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
   );
 };
 
-export default SubscriptionManager;
+export default MonthlyPaymentManager;
