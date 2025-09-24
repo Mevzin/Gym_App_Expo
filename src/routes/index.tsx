@@ -20,13 +20,14 @@ import PlanCreation from '../screens/planCreation';
 import PlansManagement from '../screens/plansManagement';
 import { RootStackParamList } from '../types/navigation';
 import { useAuth } from '../contexts/AuthContext';
+import PaymentComponent from '../components/Payment';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator<RootStackParamList>();
 
 function AppTabs() {
     const { user } = useAuth();
-    
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -50,6 +51,9 @@ function AppTabs() {
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },
                 tabBarActiveTintColor: '#007AFF',
+                tabBarStyle: {
+                    backgroundColor: '#222b38',
+                },
                 tabBarInactiveTintColor: 'gray',
                 headerShown: false,
             })}>
@@ -71,7 +75,7 @@ function Routes() {
                 initialRouteName="Splash"
                 screenOptions={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: '#1a1a1a' },
+                    cardStyle: { backgroundColor: '#fff' },
                 }}
             >
                 <Stack.Screen name="Splash" component={SplashScreen} />

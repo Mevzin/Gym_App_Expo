@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '../../utils/logger';
 import { formatStripePrice } from '../../utils/priceUtils';
 import { paymentService } from '../../services/paymentService';
+import { IError } from "../../interfaces/types";
 
 export default function Profile() {
     const { user, logout } = useAuth();
@@ -56,27 +57,27 @@ export default function Profile() {
 
     const loadMonthlyPaymentData = async () => {
         try {
-            const token = await AsyncStorage.getItem('@GymApp:token');
             const userDataLocal = await AsyncStorage.getItem('@GymApp:user');
             const currentUser = userDataLocal ? JSON.parse(userDataLocal) : user;
             const userId = currentUser?.id || currentUser?._id;
 
-            if (!userId || !token) {
-                logger.log('Usuário ou token não encontrado para buscar mensalidade');
+            if (!userId) {
+                logger.log('Usuário não encontrado para buscar mensalidade');
                 return;
             }
 
-            const response = await api.get(`/payment/monthly-payment/user/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await api.get(`/payment/monthly-payment/user/${userId}`);
 
             if (response.data.subscription) {
                 setMonthlyPaymentData(response.data.subscription);
             } else {
                 logger.log('Nenhuma mensalidade encontrada para o usuário');
             }
-        } catch (error) {
-            logger.error('Erro ao carregar dados de mensalidade:', error);
+        } catch (error: IError | any) {
+            console.log(error.message)
+            if (error.status !== 404) {
+                logger.error('Erro ao carregar dados de mensalidade:', error);
+            }
         }
     };
 
@@ -392,7 +393,7 @@ export default function Profile() {
                                 >
                                     <View className="flex-row items-center">
                                         <MaterialIcons name="star" size={24} color="white" />
-                                        <Text className="text-white font-bold text-lg ml-2 font-roboto">Mensalidade Premium</Text>
+                                        <Text className="text-white font-bold text-lg ml-2 font-roboto">Planos</Text>
                                     </View>
                                 </TouchableOpacity>
                             ) : null}

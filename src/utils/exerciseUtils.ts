@@ -1,6 +1,11 @@
 import exerciseData from '../services/data.json';
 
 export const getExerciseName = (exerciseId: string): string => {
+    // Verificação de segurança para evitar erros
+    if (!exerciseId || typeof exerciseId !== 'string') {
+        return 'Exercício não identificado';
+    }
+
     const exerciseMap: { [key: string]: string } = {};
     
     exerciseData.Pernas.forEach(exercise => {

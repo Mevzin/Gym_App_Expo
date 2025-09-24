@@ -39,23 +39,12 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
   const fetchPlans = async () => {
     try {
       setLoading(true);
-      const token = await AsyncStorage.getItem('@GymApp:token');
-      const response = await api.get('/payment/plans', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const activePlans = response.data.plans.filter((plan: Plan) => plan.isActive);
-      setPlans(activePlans);
-
-  
-      if (selectedPlanId) {
-        const preSelectedPlan = activePlans.find((plan: Plan) => plan._id === selectedPlanId);
-        if (preSelectedPlan) {
-          setSelectedPlan(preSelectedPlan);
-        }
-      }
+      const response = await api.get('/payment/plans');
+      const plansData = response.data?.plans;
+      setPlans(Array.isArray(plansData) ? plansData : []);
     } catch (error) {
       console.error('Erro ao buscar planos:', error);
+      setPlans([]);
     } finally {
       setLoading(false);
     }
@@ -76,12 +65,12 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
 
   const getPopularPlan = () => {
     
-    return plans?.find(plan => plan.interval === 'month');
+    return Array.isArray(plans) ? plans.find(plan => plan.interval === 'month') : undefined;
   };
 
   const getBestValuePlan = () => {
     
-    return plans?.find(plan => plan.interval === 'year');
+    return Array.isArray(plans) ? plans.find(plan => plan.interval === 'year') : undefined;
   };
 
   if (loading) {
@@ -105,8 +94,8 @@ export const PlanSelector: React.FC<PlanSelectorProps> = ({
 
   const popularPlan = getPopularPlan();
   const bestValuePlan = getBestValuePlan();
-  const monthlyPlan = plans?.find(plan => plan.interval === 'month');
-    const yearlyPlan = plans?.find(plan => plan.interval === 'year');
+  const monthlyPlan = Array.isArray(plans) ? plans.find(plan => plan.interval === 'month') : undefined;
+  const yearlyPlan = Array.isArray(plans) ? plans.find(plan => plan.interval === 'year') : undefined;
 
   return (
     <ScrollView className="flex-1 p-4">

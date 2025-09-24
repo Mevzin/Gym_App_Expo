@@ -41,6 +41,13 @@ export default function MonthlyPaymentScreen() {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('@GymApp:token');
+      
+      if (!token) {
+        console.error('Token não encontrado');
+        setHasMonthlyPayment(false);
+        return;
+      }
+
       const response = await api.get('/payment/monthly-payment', {
         headers: { Authorization: `Bearer ${token}` },
       });

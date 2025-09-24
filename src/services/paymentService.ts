@@ -52,30 +52,20 @@ export interface Payment {
 }
 
 class PaymentService {
-  private async getAuthHeaders() {
-    const token = await AsyncStorage.getItem('@GymApp:token');
-    return {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    };
-  }
-
-
   async getPlans(): Promise<Plan[]> {
     try {
-      const headers = await this.getAuthHeaders();
-      const response = await api.get('/payment/plans', { headers });
-      return response.data;
+      const response = await api.get('/payment/plans');
+      const plansData = response.data?.plans;
+      return Array.isArray(plansData) ? plansData : [];
     } catch (error) {
       console.error('Erro ao buscar planos:', error);
-      throw error;
+      return [];
     }
   }
 
   async getPlanById(planId: string): Promise<Plan> {
     try {
-      const headers = await this.getAuthHeaders();
-      const response = await api.get(`/payment/plans/${planId}`, { headers });
+      const response = await api.get(`/payment/plans/${planId}`);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar plano:', error);
@@ -86,7 +76,6 @@ class PaymentService {
 
   async createCustomer(): Promise<{ customerId: string }> {
     try {
-      const headers = await this.getAuthHeaders();
       const userData = await AsyncStorage.getItem('@GymApp:user');
       const user = userData ? JSON.parse(userData) : null;
       const userId = user?.id || user?._id;
@@ -95,7 +84,7 @@ class PaymentService {
         throw new Error('Usuário não encontrado');
       }
 
-      const response = await api.post('/payment/customer', { userId }, { headers });
+      const response = await api.post('/payment/customer', { userId });
       return response.data;
     } catch (error) {
       console.error('Erro ao criar customer:', error);
@@ -103,18 +92,13 @@ class PaymentService {
     }
   }
 
-
   async createMonthlyPayment(planId: string): Promise<{
     subscriptionId: string;
     clientSecret: string;
     status: string;
   }> {
     try {
-      const headers = await this.getAuthHeaders();
-      const response = await api.post('/payment/monthly-payment',
-        { planId },
-        { headers }
-      );
+      const response = await api.post('/payment/monthly-payment', { planId });
       return response.data;
     } catch (error) {
       console.error('Erro ao criar mensalidade:', error);
@@ -124,7 +108,6 @@ class PaymentService {
 
   async getMonthlyPayment(): Promise<MonthlyPayment | null> {
     try {
-      const headers = await this.getAuthHeaders();
       const userData = await AsyncStorage.getItem('@GymApp:user');
       const user = userData ? JSON.parse(userData) : null;
       const userId = user?.id || user?._id;
@@ -133,7 +116,7 @@ class PaymentService {
         throw new Error('Usuário não encontrado');
       }
 
-      const response = await api.get(`/payment/monthly-payment/user/${userId}`, { headers });
+      const response = await api.get(`/payment/monthly-payment/user/${userId}`);
       return response.data.subscription;
     } catch (error: any) {
       if (error.response?.status === 404) {
@@ -146,8 +129,7 @@ class PaymentService {
 
   async cancelMonthlyPayment(subscriptionId: string): Promise<{ message: string }> {
     try {
-      const headers = await this.getAuthHeaders();
-      const response = await api.patch(`/payment/monthly-payment/${subscriptionId}/cancel`, {}, { headers });
+      const response = await api.patch(`/payment/monthly-payment/${subscriptionId}/cancel`);
       return response.data;
     } catch (error) {
       console.error('Erro ao cancelar mensalidade:', error);
@@ -155,14 +137,9 @@ class PaymentService {
     }
   }
 
-
-
-
-
   async getPaymentHistory(): Promise<Payment[]> {
     try {
-      const headers = await this.getAuthHeaders();
-      const response = await api.get('/payment/history', { headers });
+      const response = await api.get('/payment/history');
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar histórico de pagamentos:', error);
@@ -170,11 +147,9 @@ class PaymentService {
     }
   }
 
-
   async getInvoices(): Promise<any[]> {
     try {
-      const headers = await this.getAuthHeaders();
-      const response = await api.get('/payment/invoices', { headers });
+      const response = await api.get('/payment/invoices');
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar faturas:', error);

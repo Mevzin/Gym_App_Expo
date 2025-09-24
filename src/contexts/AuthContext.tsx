@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authService } from '../services/api';
 
@@ -52,17 +52,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const storedToken = await AsyncStorage.getItem('@GymApp:token');
+      // Verifica se há dados do usuário salvos localmente
       const userData = await AsyncStorage.getItem('@GymApp:user');
-      
-      if (storedToken && userData) {
+
+      if (userData) {
         const parsedUser = JSON.parse(userData);
-        setToken(storedToken);
-        setUser(parsedUser);
-        setIsAuthenticated(true);
+
+        // Verifica se o usuário ainda está autenticado no servidor
+        const isAuth = await authService.isAuthenticated();
+
+        if (isAuth) {
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+        } else {
+          // Se não estiver autenticado, limpa os dados locais
+          await AsyncStorage.removeItem('@GymApp:user');
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } else {
+        setIsAuthenticated(false);
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
+      setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
     }
@@ -70,63 +83,73 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('🔐 Iniciando login com:', email);
-      setIsLoading(true);
-      
-      console.log('📡 Chamando authService.login...');
       const response = await authService.login(email, password);
-      console.log('✅ Resposta do login:', response);
-      
-      if (response.token && response.user) {
-        console.log('💾 Salvando dados no AsyncStorage...');
-    
-        await AsyncStorage.setItem('@GymApp:token', response.token);
+
+      if (response.user) {
+        // Os cookies HTTP-only são gerenciados automaticamente pelo navegador/axios
         await AsyncStorage.setItem('@GymApp:user', JSON.stringify(response.user));
         
-        console.log('🔄 Atualizando estado...');
-    
-        setToken(response.token);
+        // Se houver token na resposta, salva localmente para uso em headers
+        if (response.token) {
+          await AsyncStorage.setItem('@GymApp:token', response.token);
+          setToken(response.token);
+        }
+
         setUser(response.user);
         setIsAuthenticated(true);
-        console.log('✅ Login realizado com sucesso!');
-      } else {
-        console.error('❌ Resposta inválida do servidor:', response);
-        throw new Error('Invalid response from server');
       }
     } catch (error) {
-      console.error('❌ Erro durante o login:', error);
+      console.error('Login error:', error);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const logout = async () => {
     try {
       await authService.logout();
-      
-  
-      await AsyncStorage.removeItem('@GymApp:token');
+
+      // Remove apenas os dados do usuário do storage local
       await AsyncStorage.removeItem('@GymApp:user');
-      
-  
-      setToken(null);
+      await AsyncStorage.removeItem('@GymApp:token');
+
       setUser(null);
+      setToken(null);
       setIsAuthenticated(false);
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Logout error:', error);
+      // Mesmo se o logout falhar no servidor, limpa o estado local
+      await AsyncStorage.removeItem('@GymApp:user');
+      await AsyncStorage.removeItem('@GymApp:token');
+
+      setUser(null);
+      setToken(null);
+      setIsAuthenticated(false);
     }
   };
 
   const refreshUser = async () => {
     try {
+      setIsLoading(true);
       const userData = await AsyncStorage.getItem('@GymApp:user');
+      const tokenData = await AsyncStorage.getItem('@GymApp:token');
+
       if (userData) {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
+        const user = JSON.parse(userData);
+        setUser(user);
+        setToken(tokenData);
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setToken(null);
+        setIsAuthenticated(false);
       }
     } catch (error) {
       console.error('Error refreshing user:', error);
+      setUser(null);
+      setToken(null);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 

@@ -41,6 +41,12 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('@GymApp:token');
+      
+      if (!token) {
+        console.error('Token não encontrado');
+        return;
+      }
+
       const response = await api.get('/payment/monthly-payment', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -75,7 +81,12 @@ export const SubscriptionManager: React.FC<SubscriptionManagerProps> = ({
           onPress: async () => {
             try {
               setCanceling(true);
+
               const token = await AsyncStorage.getItem('@GymApp:token');
+              
+              if (!token) {
+                throw new Error('Token de autenticação não encontrado');
+              }
 
               await api.post('/payment/cancel-subscription', {}, {
                 headers: { Authorization: `Bearer ${token}` },

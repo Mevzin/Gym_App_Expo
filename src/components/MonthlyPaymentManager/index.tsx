@@ -41,6 +41,12 @@ export const MonthlyPaymentManager: React.FC<MonthlyPaymentManagerProps> = ({
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem('@GymApp:token');
+      
+      if (!token) {
+        console.error('Token não encontrado');
+        return;
+      }
+
       const response = await api.get('/payment/monthly-payment', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -50,7 +56,7 @@ export const MonthlyPaymentManager: React.FC<MonthlyPaymentManagerProps> = ({
       }
     } catch (error: any) {
       if (error.response?.status !== 404) {
-        console.error('Erro ao buscar mensalidade:', error);
+        console.error('Erro ao buscar assinatura:', error);
       }
       
     } finally {
@@ -75,7 +81,12 @@ export const MonthlyPaymentManager: React.FC<MonthlyPaymentManagerProps> = ({
           onPress: async () => {
             try {
               setCanceling(true);
+
               const token = await AsyncStorage.getItem('@GymApp:token');
+              
+              if (!token) {
+                throw new Error('Token de autenticação não encontrado');
+              }
 
               await api.post('/payment/cancel-subscription', {}, {
                 headers: { Authorization: `Bearer ${token}` },

@@ -1,22 +1,33 @@
-import { SafeAreaView, ScrollView, Text, View } from "react-native";
+import { SafeAreaView, ScrollView, Text, View, TouchableOpacity } from "react-native";
 import CardProfile from "../../components/CardProfile";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ProgressBar from 'react-native-progress';
 import { useWindowDimensions } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
 import { progressService, ProgressData } from '../../services/progressService';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { logger } from "../../utils/logger";
+import { useAuth } from "../../contexts/AuthContext";
 
 
 export default function Progress() {
     const { width } = useWindowDimensions();
     const [progressData, setProgressData] = useState<ProgressData | null>(null);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+    const navigation = useNavigation();
 
     const loadProgressData = async () => {
         try {
             setLoading(true);
+            
+            // Verificar se o usuário tem fileId antes de carregar progresso
+            if (!user?.fileId) {
+                setProgressData(null);
+                setLoading(false);
+                return;
+            }
+            
             const data = await progressService.getProgress();
             setProgressData(data);
         } catch (error) {
@@ -28,15 +39,15 @@ export default function Progress() {
 
     useEffect(() => {
         loadProgressData();
-    }, []);
+    }, [user?.fileId]);
 
     useFocusEffect(
         useCallback(() => {
             loadProgressData();
-        }, [])
+        }, [user?.fileId])
     );
 
-    if (loading || !progressData) {
+    if (loading) {
         return (
             <SafeAreaView className="flex-1 bg-dark">
                 <ScrollView className="bg-primary" showsVerticalScrollIndicator={false}>
@@ -44,6 +55,56 @@ export default function Progress() {
                         <CardProfile />
                         <View className="w-[95%] mt-2">
                             <Text className="text-white font-bold text-2xl font-roboto">Carregando...</Text>
+                        </View>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }
+
+    // Se o usuário não tem fileId, mostrar tela de estado vazio
+    if (!user?.fileId) {
+        return (
+            <SafeAreaView className="flex-1 bg-dark">
+                <ScrollView className="bg-primary" showsVerticalScrollIndicator={false}>
+                    <View className="items-center">
+                        <CardProfile />
+                        <View className="w-[95%] mt-2 items-center justify-center" style={{ minHeight: 400 }}>
+                            <MaterialIcons
+                                name="fitness-center"
+                                size={80}
+                                color="#6B7280"
+                            />
+                            <Text className="text-white font-bold text-2xl font-roboto mt-4 text-center">
+                                Nenhum Progresso Disponível
+                            </Text>
+                            <Text className="text-gray-400 font-light text-lg font-roboto mt-2 text-center px-4">
+                                Você precisa ter um treino ativo para visualizar seu progresso.
+                            </Text>
+                            <TouchableOpacity
+                                className="bg-blue-500 px-6 py-3 rounded-lg mt-6"
+                                onPress={() => navigation.navigate('EditWorkout' as never)}
+                            >
+                                <Text className="text-white font-bold text-lg font-roboto">
+                                    Criar Treino
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }
+
+    // Se não há dados de progresso mas o usuário tem fileId
+    if (!progressData) {
+        return (
+            <SafeAreaView className="flex-1 bg-dark">
+                <ScrollView className="bg-primary" showsVerticalScrollIndicator={false}>
+                    <View className="items-center">
+                        <CardProfile />
+                        <View className="w-[95%] mt-2">
+                            <Text className="text-white font-bold text-2xl font-roboto">Erro ao carregar progresso</Text>
                         </View>
                     </View>
                 </ScrollView>

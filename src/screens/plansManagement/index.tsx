@@ -52,9 +52,11 @@ export default function PlansManagement() {
     try {
       setLoading(true);
       const response = await api.get('/payment/plans');
-      setPlans(response.data.plans || []);
+      const plansData = response.data?.plans;
+      setPlans(Array.isArray(plansData) ? plansData : []);
     } catch (error: any) {
       console.error('Erro ao buscar planos:', error);
+      setPlans([]);
       Alert.alert(
         'Erro',
         'Não foi possível carregar os planos. Tente novamente.'
