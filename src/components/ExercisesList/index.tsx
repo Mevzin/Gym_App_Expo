@@ -1,4 +1,4 @@
-import { Text, View, ActivityIndicator, Alert, TouchableOpacity } from "react-native";
+import { Text, View, Alert, TouchableOpacity } from "react-native";
 import CardExerciseLarge from "../CardExerciseLarge";
 import { useEffect, useState } from "react";
 import { exerciseService } from "../../services/api";
@@ -55,12 +55,11 @@ export default function ExercisesList() {
     const checkUserFileAndLoadExercises = async (day: any) => {
         try {
             setLoading(true);
-
             const userFile = await exerciseService.checkUserFile();
             setHasUserFile(!!userFile);
 
-            if (userFile) {
-                const response = await exerciseService.getExercisesByDay(day);
+            if (user?.fileId) {
+                const response = await exerciseService.getExercisesByDay(day, user.id);
                 setExercises(response.exercises || []);
             } else {
                 setExercises([]);
@@ -74,25 +73,10 @@ export default function ExercisesList() {
         }
     };
 
-    const loadExercises = async (day: any) => {
-        try {
-            setLoading(true);
-            const response = await exerciseService.getExercisesByDay(day);
-            setExercises(response.exercises || []);
-        } catch (error) {
-            console.error('Erro ao carregar exercícios:', error);
-            Alert.alert('Erro', 'Não foi possível carregar os exercícios.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const createDefaultExercises = async () => {
         try {
             setLoading(true);
-
             let defaultExercises: string[] = [];
-
             switch (currentDay) {
                 case 'segunda':
                     defaultExercises = ['agachamentoLivre', 'legPress', 'cadeiraExtensora', 'cadeiraFlexora', 'panturrilhaEmPe'];

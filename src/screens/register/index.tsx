@@ -15,6 +15,8 @@ export default function Register() {
     const [isLoading, setIsLoading] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [nameError, setNameError] = useState('');
+    const [ageError, setAgeError] = useState('');
     const navigation = useNavigation();
 
     const validateForm = () => {
@@ -71,9 +73,38 @@ export default function Register() {
             Alert.alert('Sucesso', 'Conta criada com sucesso!', [
                 { text: 'OK', onPress: () => navigation.navigate('Login' as never) }
             ]);
-        } catch (error) {
+        } catch (error: any) {
             setIsLoading(false);
-            Alert.alert('Erro', 'Ocorreu um erro ao tentar crias sua conta');
+            setNameError('');
+            setEmailError('');
+            setPasswordError('');
+            setAgeError('');
+
+            const apiData = error?.response?.data;
+            if (apiData?.code === 'VALIDATION_ERROR' && Array.isArray(apiData.details)) {
+                apiData.details.forEach((detail: { field: string; message: string }) => {
+                    switch (detail.field) {
+                        case 'name':
+                            setNameError(detail.message);
+                            break;
+                        case 'email':
+                            setEmailError(detail.message);
+                            break;
+                        case 'password':
+                            setPasswordError(detail.message);
+                            break;
+                        case 'age':
+                            setAgeError(detail.message);
+                            break;
+                        default:
+                            break;
+                    }
+                });
+                const joined = apiData.details.map((d: any) => d.message).join('\n');
+                Alert.alert('Erro de validação', joined);
+            } else {
+                Alert.alert('Erro', apiData?.message || 'Ocorreu um erro ao criar sua conta');
+            }
         }
     };
 
@@ -123,7 +154,7 @@ export default function Register() {
                                 onChangeText={setName}
                             />
                         </View>
-                        {emailError ? <Text className="text-red-400 text-sm mt-1">{emailError}</Text> : null}
+                        {nameError ? <Text className="text-red-400 text-sm mt-1">{nameError}</Text> : null}
                     </View>
 
                     <View className="w-full mb-4">
@@ -147,7 +178,7 @@ export default function Register() {
                                 }}
                             />
                         </View>
-                        {passwordError ? <Text className="text-red-400 text-sm mt-1">{passwordError}</Text> : null}
+                        {emailError ? <Text className="text-red-400 text-sm mt-1">{emailError}</Text> : null}
                     </View>
 
 
@@ -173,6 +204,7 @@ export default function Register() {
                             />
                         </View>
                     </View>
+                    {ageError ? <Text className="text-red-400 text-sm mt-1">{ageError}</Text> : null}
 
                     <View className="w-full mb-4">
                         <Text className="text-white text-lg font-bold mb-2 font-roboto">Confirmar Senha</Text>

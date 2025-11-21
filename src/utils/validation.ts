@@ -4,7 +4,8 @@ export const validateEmail = (email: string): boolean => {
 }
 
 export const validatePassword = (password: string): boolean => {
-  return password.length >= 6
+  const complexRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+  return complexRegex.test(password)
 }
 
 export const validateRequired = (value: string): boolean => {

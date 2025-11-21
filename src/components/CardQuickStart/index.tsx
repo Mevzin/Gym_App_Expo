@@ -17,13 +17,13 @@ export default function CardQuickStart() {
         <View className="my-6 w-[95%]">
             <Text className="text-white text-2xl font-semibold font-roboto">Quick Start</Text>
             <View className="flex-row justify-evenly">
-                <TouchableOpacity 
+                <TouchableOpacity
                     className="flex-col w-[45%] h-28 bg-[#c21409] mt-3 rounded-lg items-center justify-center"
                     onPress={handleStartWorkout}
                     activeOpacity={0.8}
                 >
                     <AntDesign
-                        name="caretright"
+                        name="caret-right"
                         size={30}
                         color={"#FFF"}
                     />
@@ -31,7 +31,7 @@ export default function CardQuickStart() {
                         Start Workout
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
+                <TouchableOpacity
                     className="flex-col w-[45%] h-28 bg-[#4abdd4] mt-3 rounded-lg items-center justify-center"
                     onPress={handleViewProgress}
                     activeOpacity={0.8}

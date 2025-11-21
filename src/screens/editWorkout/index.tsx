@@ -27,25 +27,20 @@ type EditWorkoutRouteProp = RouteProp<RootStackParamList, 'EditWorkout'>;
 export function EditWorkout() {
     const navigation = useNavigation();
     const route = useRoute<EditWorkoutRouteProp>();
-    const { user } = route.params || {};
-    const { token } = useAuth();
+    const { user: paramUser } = route.params || {};
+    const { user: contextUser, token, updateUser } = useAuth();
+    const user = paramUser || contextUser;
     const [categories, setCategories] = useState<ExerciseCategory[]>([]);
     const [selectedExercises, setSelectedExercises] = useState<{ [key: string]: Exercise[] }>({});
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState('pernas');
-    const [showSelectedOnly, setShowSelectedOnly] = useState(false);
 
     useEffect(() => {
         initializeCategories();
+        loadCurrentWorkout();
     }, []);
-
-    useEffect(() => {
-        if (categories.length > 0) {
-            loadCurrentWorkout();
-        }
-    }, [categories]);
 
     const initializeCategories = () => {
         const exerciseCategories: ExerciseCategory[] = [
@@ -146,25 +141,123 @@ export function EditWorkout() {
     const loadCurrentWorkout = async () => {
         try {
             setInitialLoading(true);
+            console.log('🔍 [EditWorkout] Carregando treino atual...');
+            console.log('👤 [EditWorkout] Usuário:', user);
+            console.log('📁 [EditWorkout] FileId do usuário:', user?.fileId);
             let userFile;
-            
             if (user) {
-                 if (user.fileId) {
+                if (user.fileId) {
+                    console.log('📥 [EditWorkout] Buscando arquivo por ID:', user.fileId);
                     const response = await api.get(`/files/getFileById/${user.fileId}`, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
                     });
                     userFile = response.data.file;
+                    console.log('📄 [EditWorkout] Arquivo encontrado:', userFile);
+                    console.log('📄 [EditWorkout] Estrutura do arquivo:', JSON.stringify(userFile, null, 2));
                 } else {
-                     userFile = null;
-                 }
-             } else {
-                 userFile = await exerciseService.checkUserFile();
+                    console.log('⚠️ [EditWorkout] Usuário não tem fileId, não há treino para carregar');
+                    userFile = null;
+                }
+            } else {
+                userFile = await exerciseService.checkUserFile();
             }
+
+            // Definir categorias localmente para garantir que estejam disponíveis
+            const exerciseCategories: ExerciseCategory[] = [
+                {
+                    name: 'pernas',
+                    displayName: 'Pernas',
+                    exercises: [
+                        { name: 'agachamentoLivre', displayName: 'Agachamento Livre', category: 'pernas', sets: '3x 12' },
+                        { name: 'agachamentoHack', displayName: 'Agachamento Hack', category: 'pernas', sets: '3x 12' },
+                        { name: 'legPress', displayName: 'Leg Press', category: 'pernas', sets: '3x 15' },
+                        { name: 'cadeiraExtensora', displayName: 'Cadeira Extensora', category: 'pernas', sets: '3x 15' },
+                        { name: 'cadeiraFlexora', displayName: 'Cadeira Flexora', category: 'pernas', sets: '3x 15' },
+                        { name: 'stiff', displayName: 'Stiff', category: 'pernas', sets: '3x 12' },
+                        { name: 'afundo', displayName: 'Afundo', category: 'pernas', sets: '3x 12' },
+                        { name: 'levantamentoTerra', displayName: 'Levantamento Terra', category: 'pernas', sets: '3x 8' },
+                        { name: 'panturrilhaEmPe', displayName: 'Panturrilha em Pé', category: 'pernas', sets: '4x 20' },
+                        { name: 'panturrilhaSentado', displayName: 'Panturrilha Sentado', category: 'pernas', sets: '4x 20' },
+                    ]
+                },
+                {
+                    name: 'bracos',
+                    displayName: 'Braços',
+                    exercises: [
+                        { name: 'roscaDireta', displayName: 'Rosca Direta', category: 'bracos', sets: '3x 12' },
+                        { name: 'roscaAlternada', displayName: 'Rosca Alternada', category: 'bracos', sets: '3x 12' },
+                        { name: 'roscaMartelo', displayName: 'Rosca Martelo', category: 'bracos', sets: '3x 12' },
+                        { name: 'roscaConcentrada', displayName: 'Rosca Concentrada', category: 'bracos', sets: '3x 12' },
+                        { name: 'roscaScott', displayName: 'Rosca Scott', category: 'bracos', sets: '3x 12' },
+                        { name: 'roscaInversa', displayName: 'Rosca Inversa', category: 'bracos', sets: '3x 12' },
+                        { name: 'tricepsTesta', displayName: 'Tríceps Testa', category: 'bracos', sets: '3x 12' },
+                        { name: 'tricepsFrances', displayName: 'Tríceps Francês', category: 'bracos', sets: '3x 12' },
+                        { name: 'tricepsCorda', displayName: 'Tríceps Corda', category: 'bracos', sets: '3x 15' },
+                        { name: 'tricepsBanco', displayName: 'Tríceps Banco', category: 'bracos', sets: '3x 12' },
+                        { name: 'mergulhoNasParalelas', displayName: 'Mergulho nas Paralelas', category: 'bracos', sets: '3x 12' },
+                    ]
+                },
+                {
+                    name: 'peito',
+                    displayName: 'Peito',
+                    exercises: [
+                        { name: 'supinoReto', displayName: 'Supino Reto', category: 'peito', sets: '3x 10' },
+                        { name: 'supinoInclinado', displayName: 'Supino Inclinado', category: 'peito', sets: '3x 10' },
+                        { name: 'supinoDeclinado', displayName: 'Supino Declinado', category: 'peito', sets: '3x 10' },
+                        { name: 'crucifixoReto', displayName: 'Crucifixo Reto', category: 'peito', sets: '3x 12' },
+                        { name: 'crucifixoInclinado', displayName: 'Crucifixo Inclinado', category: 'peito', sets: '3x 12' },
+                        { name: 'crucifixoDeclinado', displayName: 'Crucifixo Declinado', category: 'peito', sets: '3x 12' },
+                        { name: 'peckDeck', displayName: 'Peck Deck', category: 'peito', sets: '3x 15' },
+                        { name: 'pullover', displayName: 'Pullover', category: 'peito', sets: '3x 12' },
+                        { name: 'flexaoDeBraco', displayName: 'Flexão de Braço', category: 'peito', sets: '3x 15' },
+                    ]
+                },
+                {
+                    name: 'costas',
+                    displayName: 'Costas',
+                    exercises: [
+                        { name: 'puxadaAlta', displayName: 'Puxada Alta', category: 'costas', sets: '3x 12' },
+                        { name: 'puxadaFrente', displayName: 'Puxada Frente', category: 'costas', sets: '3x 12' },
+                        { name: 'puxadaAtras', displayName: 'Puxada Atrás', category: 'costas', sets: '3x 12' },
+                        { name: 'barraFixa', displayName: 'Barra Fixa', category: 'costas', sets: '3x 10' },
+                        { name: 'remadaCurvada', displayName: 'Remada Curvada', category: 'costas', sets: '3x 12' },
+                        { name: 'remadaUnilateral', displayName: 'Remada Unilateral', category: 'costas', sets: '3x 12' },
+                        { name: 'remadaBaixa', displayName: 'Remada Baixa', category: 'costas', sets: '3x 12' },
+                        { name: 'remadaCavalinho', displayName: 'Remada Cavalinho', category: 'costas', sets: '3x 12' },
+                        { name: 'levantamentoTerraCostas', displayName: 'Levantamento Terra', category: 'costas', sets: '3x 8' },
+                    ]
+                },
+                {
+                    name: 'ombros',
+                    displayName: 'Ombros',
+                    exercises: [
+                        { name: 'desenvolvimentoHalteres', displayName: 'Desenvolvimento Halteres', category: 'ombros', sets: '3x 12' },
+                        { name: 'desenvolvimentoBarra', displayName: 'Desenvolvimento Barra', category: 'ombros', sets: '3x 10' },
+                        { name: 'elevacaoLateral', displayName: 'Elevação Lateral', category: 'ombros', sets: '3x 15' },
+                        { name: 'elevacaoFrontal', displayName: 'Elevação Frontal', category: 'ombros', sets: '3x 15' },
+                        { name: 'elevacaoPosteriores', displayName: 'Elevação Posteriores', category: 'ombros', sets: '3x 15' },
+                        { name: 'encolhimento', displayName: 'Encolhimento', category: 'ombros', sets: '3x 15' },
+                        { name: 'remadaAlta', displayName: 'Remada Alta', category: 'ombros', sets: '3x 12' },
+                    ]
+                },
+                {
+                    name: 'abdomen',
+                    displayName: 'Abdômen',
+                    exercises: [
+                        { name: 'abdominalTradicional', displayName: 'Abdominal Tradicional', category: 'abdomen', sets: '3x 20' },
+                        { name: 'abdominalObliquo', displayName: 'Abdominal Oblíquo', category: 'abdomen', sets: '3x 15' },
+                        { name: 'prancha', displayName: 'Prancha', category: 'abdomen', sets: '3x 30s' },
+                        { name: 'elevacaoPernas', displayName: 'Elevação de Pernas', category: 'abdomen', sets: '3x 15' },
+                        { name: 'bicicleta', displayName: 'Bicicleta', category: 'abdomen', sets: '3x 20' },
+                    ]
+                }
+            ];
 
             if (userFile) {
                 const workoutData = userFile;
+                console.log('🔍 [EditWorkout] Processando dados do arquivo:', workoutData);
 
                 const currentSelected: { [key: string]: Exercise[] } = {
                     pernas: [],
@@ -186,25 +279,30 @@ export function EditWorkout() {
 
                 Object.entries(dayToCategory).forEach(([day, category]) => {
                     const dayExercises = workoutData[day] || [];
+                    console.log(`📅 [EditWorkout] ${day} (${category}):`, dayExercises);
 
                     dayExercises.forEach((exerciseName: string) => {
-                        const foundExercise = categories.find(cat => cat.name === category)
+                        const foundExercise = exerciseCategories.find(cat => cat.name === category)
                             ?.exercises.find(ex => ex.name === exerciseName);
 
                         if (foundExercise) {
                             const sets = workoutData[exerciseName] || foundExercise.sets;
+                            console.log(`✅ [EditWorkout] Exercício encontrado: ${exerciseName} - Sets: ${sets}`);
                             currentSelected[category].push({
                                 ...foundExercise,
                                 sets
                             });
+                        } else {
+                            console.log(`❌ [EditWorkout] Exercício não encontrado: ${exerciseName} na categoria ${category}`);
                         }
                     });
                 });
 
+                console.log('🎯 [EditWorkout] Exercícios carregados:', currentSelected);
                 setSelectedExercises(currentSelected);
             } else {
                 const initialSelected: { [key: string]: Exercise[] } = {};
-                categories.forEach(category => {
+                exerciseCategories.forEach(category => {
                     initialSelected[category.name] = [];
                 });
                 setSelectedExercises(initialSelected);
@@ -316,6 +414,9 @@ export function EditWorkout() {
     const saveWorkoutConfiguration = async () => {
         try {
             setLoading(true);
+            console.log('💾 [EditWorkout] Salvando configuração do treino...');
+            console.log('👤 [EditWorkout] Usuário no salvamento:', user);
+            console.log('📁 [EditWorkout] FileId no salvamento:', user?.fileId);
 
             const weeklyPlan = {
                 segunda: selectedExercises.pernas?.map(ex => ex.name) || [],
@@ -338,7 +439,8 @@ export function EditWorkout() {
             };
 
             if (user) {
-                 if (user.fileId) {
+                if (user.fileId) {
+                    console.log('🔄 [EditWorkout] Atualizando arquivo existente:', user.fileId);
                     await api.put(`/files/updateFileById/${user.fileId}`, {
                         userId: user.id,
                         ...finalData
@@ -348,7 +450,8 @@ export function EditWorkout() {
                         }
                     });
                 } else {
-                     const response = await api.post('/files/createFile', {
+                    console.log('➕ [EditWorkout] Criando novo arquivo (usuário não tem fileId)');
+                    const response = await api.post('/files/createFile', {
                         userId: user.id,
                         ...finalData
                     }, {
@@ -356,17 +459,20 @@ export function EditWorkout() {
                             Authorization: `Bearer ${token}`
                         }
                     });
-                     
-                     await api.patch(`/user/update-workout/${user.id}`, {
-                        fileId: response.data.file._id
+
+                    await api.patch(`/user/update-workout/${user.id}`, {
+                        fileId: response.data.fileSaved._id
                     }, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
                     });
+
+                    // Atualizar o contexto do usuário com o novo fileId
+                    await updateUser({ fileId: response.data.fileSaved._id });
                 }
-             } else {
-                 await exerciseService.updateFile(finalData);
+            } else {
+                await exerciseService.updateFile(finalData);
             }
 
             Alert.alert('Sucesso', 'Treino atualizado com sucesso!', [

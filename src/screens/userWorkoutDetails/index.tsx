@@ -24,6 +24,7 @@ interface ExerciseGroup {
   exercises: {
     key: string;
     name: string;
+    displayName: string;
     value: string;
     isConfigured: boolean;
   }[];
@@ -33,84 +34,84 @@ const exerciseGroups: ExerciseGroup[] = [
   {
     name: 'Pernas',
     exercises: [
-      { key: 'agachamentoLivre', name: 'Agachamento Livre', value: '0x0', isConfigured: false },
-      { key: 'agachamentoHack', name: 'Agachamento Hack', value: '0x0', isConfigured: false },
-      { key: 'legPress', name: 'Leg Press', value: '0x0', isConfigured: false },
-      { key: 'cadeiraExtensora', name: 'Cadeira Extensora', value: '0x0', isConfigured: false },
-      { key: 'cadeiraFlexora', name: 'Cadeira Flexora', value: '0x0', isConfigured: false },
-      { key: 'stiff', name: 'Stiff', value: '0x0', isConfigured: false },
-      { key: 'afundo', name: 'Afundo', value: '0x0', isConfigured: false },
-      { key: 'levantamentoTerra', name: 'Levantamento Terra', value: '0x0', isConfigured: false },
-      { key: 'panturrilhaEmPe', name: 'Panturrilha em Pé', value: '0x0', isConfigured: false },
-      { key: 'panturrilhaSentado', name: 'Panturrilha Sentado', value: '0x0', isConfigured: false },
+      { key: 'agachamentoLivre', name: 'Agachamento Livre', displayName: 'Agachamento Livre', value: '0x0', isConfigured: false },
+      { key: 'agachamentoHack', name: 'Agachamento Hack', displayName: 'Agachamento Hack', value: '0x0', isConfigured: false },
+      { key: 'legPress', name: 'Leg Press', displayName: 'Leg Press', value: '0x0', isConfigured: false },
+      { key: 'cadeiraExtensora', name: 'Cadeira Extensora', displayName: 'Cadeira Extensora', value: '0x0', isConfigured: false },
+      { key: 'cadeiraFlexora', name: 'Cadeira Flexora', displayName: 'Cadeira Flexora', value: '0x0', isConfigured: false },
+      { key: 'stiff', name: 'Stiff', displayName: 'Stiff', value: '0x0', isConfigured: false },
+      { key: 'afundo', name: 'Afundo', displayName: 'Afundo', value: '0x0', isConfigured: false },
+      { key: 'levantamentoTerra', name: 'Levantamento Terra', displayName: 'Levantamento Terra', value: '0x0', isConfigured: false },
+      { key: 'panturrilhaEmPe', name: 'Panturrilha em Pé', displayName: 'Panturrilha em Pé', value: '0x0', isConfigured: false },
+      { key: 'panturrilhaSentado', name: 'Panturrilha Sentado', displayName: 'Panturrilha Sentado', value: '0x0', isConfigured: false },
     ]
   },
   {
     name: 'Braços',
     exercises: [
-      { key: 'roscaDireta', name: 'Rosca Direta', value: '0x0', isConfigured: false },
-      { key: 'roscaAlternada', name: 'Rosca Alternada', value: '0x0', isConfigured: false },
-      { key: 'roscaMartelo', name: 'Rosca Martelo', value: '0x0', isConfigured: false },
-      { key: 'roscaConcentrada', name: 'Rosca Concentrada', value: '0x0', isConfigured: false },
-      { key: 'roscaScott', name: 'Rosca Scott', value: '0x0', isConfigured: false },
-      { key: 'roscaInversa', name: 'Rosca Inversa', value: '0x0', isConfigured: false },
-      { key: 'tricepsTesta', name: 'Tríceps Testa', value: '0x0', isConfigured: false },
-      { key: 'tricepsFrances', name: 'Tríceps Francês', value: '0x0', isConfigured: false },
-      { key: 'tricepsCorda', name: 'Tríceps Corda', value: '0x0', isConfigured: false },
-      { key: 'tricepsBanco', name: 'Tríceps Banco', value: '0x0', isConfigured: false },
-      { key: 'mergulhoNasParalelas', name: 'Mergulho nas Paralelas', value: '0x0', isConfigured: false },
+      { key: 'roscaDireta', name: 'Rosca Direta', displayName: 'Rosca Direta', value: '0x0', isConfigured: false },
+      { key: 'roscaAlternada', name: 'Rosca Alternada', displayName: 'Rosca Alternada', value: '0x0', isConfigured: false },
+      { key: 'roscaMartelo', name: 'Rosca Martelo', displayName: 'Rosca Martelo', value: '0x0', isConfigured: false },
+      { key: 'roscaConcentrada', name: 'Rosca Concentrada', displayName: 'Rosca Concentrada', value: '0x0', isConfigured: false },
+      { key: 'roscaScott', name: 'Rosca Scott', displayName: 'Rosca Scott', value: '0x0', isConfigured: false },
+      { key: 'roscaInversa', name: 'Rosca Inversa', displayName: 'Rosca Inversa', value: '0x0', isConfigured: false },
+      { key: 'tricepsTesta', name: 'Tríceps Testa', displayName: 'Tríceps Testa', value: '0x0', isConfigured: false },
+      { key: 'tricepsFrances', name: 'Tríceps Francês', displayName: 'Tríceps Francês', value: '0x0', isConfigured: false },
+      { key: 'tricepsCorda', name: 'Tríceps Corda', displayName: 'Tríceps Corda', value: '0x0', isConfigured: false },
+      { key: 'tricepsBanco', name: 'Tríceps Banco', displayName: 'Tríceps Banco', value: '0x0', isConfigured: false },
+      { key: 'mergulhoNasParalelas', name: 'Mergulho nas Paralelas', displayName: 'Mergulho nas Paralelas', value: '0x0', isConfigured: false },
     ]
   },
   {
     name: 'Peito',
     exercises: [
-      { key: 'supinoReto', name: 'Supino Reto', value: '0x0', isConfigured: false },
-      { key: 'supinoInclinado', name: 'Supino Inclinado', value: '0x0', isConfigured: false },
-      { key: 'supinoDeclinado', name: 'Supino Declinado', value: '0x0', isConfigured: false },
-      { key: 'crucifixoReto', name: 'Crucifixo Reto', value: '0x0', isConfigured: false },
-      { key: 'crucifixoInclinado', name: 'Crucifixo Inclinado', value: '0x0', isConfigured: false },
-      { key: 'crucifixoDeclinado', name: 'Crucifixo Declinado', value: '0x0', isConfigured: false },
-      { key: 'peckDeck', name: 'Peck Deck', value: '0x0', isConfigured: false },
-      { key: 'pullover', name: 'Pullover', value: '0x0', isConfigured: false },
-      { key: 'flexaoDeBraco', name: 'Flexão de Braço', value: '0x0', isConfigured: false },
+      { key: 'supinoReto', name: 'Supino Reto', displayName: 'Supino Reto', value: '0x0', isConfigured: false },
+      { key: 'supinoInclinado', name: 'Supino Inclinado', displayName: 'Supino Inclinado', value: '0x0', isConfigured: false },
+      { key: 'supinoDeclinado', name: 'Supino Declinado', displayName: 'Supino Declinado', value: '0x0', isConfigured: false },
+      { key: 'crucifixoReto', name: 'Crucifixo Reto', displayName: 'Crucifixo Reto', value: '0x0', isConfigured: false },
+      { key: 'crucifixoInclinado', name: 'Crucifixo Inclinado', displayName: 'Crucifixo Inclinado', value: '0x0', isConfigured: false },
+      { key: 'crucifixoDeclinado', name: 'Crucifixo Declinado', displayName: 'Crucifixo Declinado', value: '0x0', isConfigured: false },
+      { key: 'peckDeck', name: 'Peck Deck', displayName: 'Peck Deck', value: '0x0', isConfigured: false },
+      { key: 'pullover', name: 'Pullover', displayName: 'Pullover', value: '0x0', isConfigured: false },
+      { key: 'flexaoDeBraco', name: 'Flexão de Braço', displayName: 'Flexão de Braço', value: '0x0', isConfigured: false },
     ]
   },
   {
     name: 'Costas',
     exercises: [
-      { key: 'puxadaAlta', name: 'Puxada Alta', value: '0x0', isConfigured: false },
-      { key: 'puxadaFrente', name: 'Puxada Frente', value: '0x0', isConfigured: false },
-      { key: 'puxadaAtras', name: 'Puxada Atrás', value: '0x0', isConfigured: false },
-      { key: 'barraFixa', name: 'Barra Fixa', value: '0x0', isConfigured: false },
-      { key: 'remadaCurvada', name: 'Remada Curvada', value: '0x0', isConfigured: false },
-      { key: 'remadaUnilateral', name: 'Remada Unilateral', value: '0x0', isConfigured: false },
-      { key: 'remadaBaixa', name: 'Remada Baixa', value: '0x0', isConfigured: false },
-      { key: 'remadaCavalinho', name: 'Remada Cavalinho', value: '0x0', isConfigured: false },
-      { key: 'levantamentoTerraCostas', name: 'Levantamento Terra Costas', value: '0x0', isConfigured: false },
+      { key: 'puxadaAlta', name: 'Puxada Alta', displayName: 'Puxada Alta', value: '0x0', isConfigured: false },
+      { key: 'puxadaFrente', name: 'Puxada Frente', displayName: 'Puxada Frente', value: '0x0', isConfigured: false },
+      { key: 'puxadaAtras', name: 'Puxada Atrás', displayName: 'Puxada Atrás', value: '0x0', isConfigured: false },
+      { key: 'barraFixa', name: 'Barra Fixa', displayName: 'Barra Fixa', value: '0x0', isConfigured: false },
+      { key: 'remadaCurvada', name: 'Remada Curvada', displayName: 'Remada Curvada', value: '0x0', isConfigured: false },
+      { key: 'remadaUnilateral', name: 'Remada Unilateral', displayName: 'Remada Unilateral', value: '0x0', isConfigured: false },
+      { key: 'remadaBaixa', name: 'Remada Baixa', displayName: 'Remada Baixa', value: '0x0', isConfigured: false },
+      { key: 'remadaCavalinho', name: 'Remada Cavalinho', displayName: 'Remada Cavalinho', value: '0x0', isConfigured: false },
+      { key: 'levantamentoTerraCostas', name: 'Levantamento Terra Costas', displayName: 'Levantamento Terra Costas', value: '0x0', isConfigured: false },
     ]
   },
   {
     name: 'Ombros',
     exercises: [
-      { key: 'desenvolvimentoHalteres', name: 'Desenvolvimento Halteres', value: '0x0', isConfigured: false },
-      { key: 'desenvolvimentoBarra', name: 'Desenvolvimento Barra', value: '0x0', isConfigured: false },
-      { key: 'elevacaoLateral', name: 'Elevação Lateral', value: '0x0', isConfigured: false },
-      { key: 'elevacaoFrontal', name: 'Elevação Frontal', value: '0x0', isConfigured: false },
-      { key: 'elevacaoPosterior', name: 'Elevação Posterior', value: '0x0', isConfigured: false },
-      { key: 'encolhimentoOmbros', name: 'Encolhimento Ombros', value: '0x0', isConfigured: false },
-      { key: 'arnoldPress', name: 'Arnold Press', value: '0x0', isConfigured: false },
+      { key: 'desenvolvimentoHalteres', name: 'Desenvolvimento Halteres', displayName: 'Desenvolvimento Halteres', value: '0x0', isConfigured: false },
+      { key: 'desenvolvimentoBarra', name: 'Desenvolvimento Barra', displayName: 'Desenvolvimento Barra', value: '0x0', isConfigured: false },
+      { key: 'elevacaoLateral', name: 'Elevação Lateral', displayName: 'Elevação Lateral', value: '0x0', isConfigured: false },
+      { key: 'elevacaoFrontal', name: 'Elevação Frontal', displayName: 'Elevação Frontal', value: '0x0', isConfigured: false },
+      { key: 'elevacaoPosterior', name: 'Elevação Posterior', displayName: 'Elevação Posterior', value: '0x0', isConfigured: false },
+      { key: 'encolhimentoOmbros', name: 'Encolhimento Ombros', displayName: 'Encolhimento Ombros', value: '0x0', isConfigured: false },
+      { key: 'arnoldPress', name: 'Arnold Press', displayName: 'Arnold Press', value: '0x0', isConfigured: false },
     ]
   },
   {
     name: 'Abdômen',
     exercises: [
-      { key: 'abdominalSupra', name: 'Abdominal Supra', value: '0x0', isConfigured: false },
-      { key: 'abdominalInfra', name: 'Abdominal Infra', value: '0x0', isConfigured: false },
-      { key: 'abdominalObliquo', name: 'Abdominal Oblíquo', value: '0x0', isConfigured: false },
-      { key: 'prancha', name: 'Prancha', value: '0x0', isConfigured: false },
-      { key: 'elevacaoDePernas', name: 'Elevação de Pernas', value: '0x0', isConfigured: false },
-      { key: 'abWheel', name: 'Ab Wheel', value: '0x0', isConfigured: false },
-      { key: 'bicicletaNoAr', name: 'Bicicleta no Ar', value: '0x0', isConfigured: false },
+      { key: 'abdominalSupra', name: 'Abdominal Supra', displayName: 'Abdominal Supra', value: '0x0', isConfigured: false },
+      { key: 'abdominalInfra', name: 'Abdominal Infra', displayName: 'Abdominal Infra', value: '0x0', isConfigured: false },
+      { key: 'abdominalObliquo', name: 'Abdominal Oblíquo', displayName: 'Abdominal Oblíquo', value: '0x0', isConfigured: false },
+      { key: 'prancha', name: 'Prancha', displayName: 'Prancha', value: '0x0', isConfigured: false },
+      { key: 'elevacaoDePernas', name: 'Elevação de Pernas', displayName: 'Elevação de Pernas', value: '0x0', isConfigured: false },
+      { key: 'abWheel', name: 'Ab Wheel', displayName: 'Ab Wheel', value: '0x0', isConfigured: false },
+      { key: 'bicicletaNoAr', name: 'Bicicleta no Ar', displayName: 'Bicicleta no Ar', value: '0x0', isConfigured: false },
     ]
   }
 ];

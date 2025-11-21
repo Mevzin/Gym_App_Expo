@@ -135,6 +135,11 @@ export function WorkoutConfiguration() {
     };
 
     const toggleExerciseSelection = (exercise: Exercise, categoryName: string) => {
+        if (!exercise || !exercise.name || !exercise.displayName) {
+            console.error('Exercício inválido:', exercise);
+            return;
+        }
+        
         setSelectedExercises(prev => {
             const categoryExercises = prev[categoryName] || [];
             const isSelected = categoryExercises.some(ex => ex.name === exercise.name);
@@ -218,8 +223,13 @@ export function WorkoutConfiguration() {
         }
     };
 
-    const filteredExercises = categories.find(cat => cat.name === activeCategory)?.exercises.filter(exercise =>
-        exercise.displayName.toLowerCase().includes(searchQuery.toLowerCase())
+    const activeCategories = categories.find(cat => cat && cat.name === activeCategory);
+    const filteredExercises = activeCategories?.exercises?.filter(exercise =>
+        exercise && 
+        exercise.name && 
+        exercise.displayName && 
+        exercise.category &&
+        exercise.displayName?.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
     const saveWorkoutConfiguration = async () => {
@@ -227,18 +237,20 @@ export function WorkoutConfiguration() {
             setLoading(true);
 
             const weeklyPlan = {
-                segunda: selectedExercises.pernas?.map(ex => ex.name) || [],
-                terca: selectedExercises.bracos?.map(ex => ex.name) || [],
-                quarta: selectedExercises.costas?.map(ex => ex.name) || [],
-                quinta: selectedExercises.peito?.map(ex => ex.name) || [],
-                sexta: selectedExercises.ombros?.map(ex => ex.name) || [],
-                sabado: selectedExercises.abdomen?.map(ex => ex.name) || [],
+                segunda: selectedExercises.pernas?.filter(ex => ex && ex.name && ex.displayName).map(ex => ex.name) || [],
+                terca: selectedExercises.bracos?.filter(ex => ex && ex.name && ex.displayName).map(ex => ex.name) || [],
+                quarta: selectedExercises.costas?.filter(ex => ex && ex.name && ex.displayName).map(ex => ex.name) || [],
+                quinta: selectedExercises.peito?.filter(ex => ex && ex.name && ex.displayName).map(ex => ex.name) || [],
+                sexta: selectedExercises.ombros?.filter(ex => ex && ex.name && ex.displayName).map(ex => ex.name) || [],
+                sabado: selectedExercises.abdomen?.filter(ex => ex && ex.name && ex.displayName).map(ex => ex.name) || [],
                 domingo: []
             };
 
             const exerciseData: any = {};
             Object.values(selectedExercises).flat().forEach(exercise => {
-                exerciseData[exercise.name] = exercise.sets;
+                if (exercise && exercise.name && exercise.displayName && exercise.sets) {
+                    exerciseData[exercise.name] = exercise.sets;
+                }
             });
 
             await exerciseService.createFile({
@@ -326,7 +338,7 @@ export function WorkoutConfiguration() {
                     <Text className="text-white text-lg font-bold mb-3 font-roboto">Categorias</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                         <View className="flex-row space-x-2 gap-2">
-                            {categories.map(category => (
+                            {categories.filter(category => category && category.name && category.displayName).map(category => (
                                 <TouchableOpacity
                                     key={category.name}
                                     className={`px-4 py-2 rounded-lg ${activeCategory === category.name ? 'bg-red-600' : 'bg-gray-600'
@@ -334,7 +346,7 @@ export function WorkoutConfiguration() {
                                     onPress={() => setActiveCategory(category.name)}
                                 >
                                     <Text className="text-white font-medium text-sm font-roboto">
-                                        {category.displayName}
+                                        {category?.displayName || 'Categoria'}
                                     </Text>
                                 </TouchableOpacity>
                             ))}
@@ -354,7 +366,7 @@ export function WorkoutConfiguration() {
                                         }`}
                                     onPress={() => toggleExerciseSelection(exercise, activeCategory)}
                                 >
-                                    <Text className="text-white text-sm font-roboto">{exercise.displayName}</Text>
+                                    <Text className="text-white text-sm font-roboto">{exercise?.displayName || 'Exercício'}</Text>
                                 </TouchableOpacity>
                             );
                         })}
@@ -369,11 +381,11 @@ export function WorkoutConfiguration() {
                                 {(selectedExercises[activeCategory] || []).length} exercícios
                             </Text>
                         </View>
-                        {(selectedExercises[activeCategory] || []).map((exercise, index) => (
+                        {(selectedExercises[activeCategory] || []).filter(exercise => exercise && exercise.name && exercise.displayName).map((exercise, index) => (
                             <View key={exercise.name} className="bg-gray-700 p-3 mb-2 rounded-lg flex-row items-center">
                                 <MaterialIcons name="drag-handle" size={20} color="#9CA3AF" />
                                 <View className="flex-1 ml-3">
-                                    <Text className="text-white font-medium font-roboto">{exercise.displayName}</Text>
+                                    <Text className="text-white font-medium font-roboto">{exercise?.displayName || 'Exercício'}</Text>
                                     <View className="flex-row items-center mt-2">
                                         <Text className="text-white/70 text-sm mr-2 font-roboto">Séries x Reps:</Text>
                                         <TextInput

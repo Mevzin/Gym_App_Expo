@@ -24,6 +24,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  updateUser: (userData: Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,6 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       // Verifica se há dados do usuário salvos localmente
       const userData = await AsyncStorage.getItem('@GymApp:user');
+      const tokenData = await AsyncStorage.getItem('@GymApp:token');
 
       if (userData) {
         const parsedUser = JSON.parse(userData);
@@ -63,11 +65,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         if (isAuth) {
           setUser(parsedUser);
+          setToken(tokenData);
           setIsAuthenticated(true);
         } else {
           // Se não estiver autenticado, limpa os dados locais
           await AsyncStorage.removeItem('@GymApp:user');
+          await AsyncStorage.removeItem('@GymApp:token');
           setUser(null);
+          setToken(null);
           setIsAuthenticated(false);
         }
       } else {
@@ -153,6 +158,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const updateUser = async (userData: Partial<User>) => {
+    try {
+      if (user) {
+        const updatedUser = { ...user, ...userData };
+        setUser(updatedUser);
+        await AsyncStorage.setItem('@GymApp:user', JSON.stringify(updatedUser));
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     token,
@@ -161,6 +178,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     refreshUser,
+    updateUser,
   };
 
   return (

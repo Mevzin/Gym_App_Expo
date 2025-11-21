@@ -15,9 +15,7 @@ import { paymentService } from '../../services/paymentService';
 import { IError } from "../../interfaces/types";
 
 export default function Profile() {
-    const { user, logout } = useAuth();
-    const [userData, setUserData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    const { user, logout, isLoading } = useAuth();
     const [showMeasurementsForm, setShowMeasurementsForm] = useState(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [measurementsData, setMeasurementsData] = useState<any>(null);
@@ -25,47 +23,19 @@ export default function Profile() {
     const navigation = useNavigation();
 
     useEffect(() => {
-        const loadData = async () => {
-            await loadUserData();
-            await loadMonthlyPaymentData();
-        };
-        loadData();
-    }, []);
-
-    const loadUserData = async () => {
-        try {
-            setLoading(true);
-            if (user) {
-                setUserData(user);
-            } else {
-                const localUser = await authService.getCurrentUser();
-                setUserData(localUser);
-            }
-            setLoading(false);
-
-            try {
-                const serverUser = await authService.getCurrentUserFromServer();
-                setUserData(serverUser);
-            } catch (serverError) {
-                logger.log('Usando dados locais - servidor indisponível');
-            }
-        } catch (error) {
-            logger.error('Erro ao carregar dados do usuário:', error);
-            setLoading(false);
+        if (user) {
+            loadMonthlyPaymentData();
         }
-    };
+    }, [user]);
 
     const loadMonthlyPaymentData = async () => {
         try {
-            const userDataLocal = await AsyncStorage.getItem('@GymApp:user');
-            const currentUser = userDataLocal ? JSON.parse(userDataLocal) : user;
-            const userId = currentUser?.id || currentUser?._id;
-
-            if (!userId) {
+            if (!user) {
                 logger.log('Usuário não encontrado para buscar mensalidade');
                 return;
             }
 
+            const userId = user.id;
             const response = await api.get(`/payment/monthly-payment/user/${userId}`);
 
             if (response.data.subscription) {
@@ -144,7 +114,7 @@ export default function Profile() {
         );
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <SafeAreaView className="flex-1 bg-dark">
                 <View className="flex-1 items-center justify-center">
@@ -169,10 +139,10 @@ export default function Profile() {
                                 color={"#FFF"}
                             />
                         </View>
-                        <Text className="text-white font-bold text-2xl font-roboto">{userData?.name || 'Usuário'}</Text>
+                        <Text className="text-white font-bold text-2xl font-roboto">{user?.name || 'Usuário'}</Text>
                         <Text className="text-gray-400 font-bold font-roboto">
-                            {userData?.role === 'admin' ? 'Administrador' :
-                                userData?.role === 'personal' ? 'Personal Trainer' : 'Membro'}
+                            {user?.role === 'admin' ? 'Administrador' :
+                                user?.role === 'personal' ? 'Personal Trainer' : 'Membro'}
                         </Text>
 
 
@@ -183,7 +153,7 @@ export default function Profile() {
                                 <View className="flex-row w-full justify-between items-center">
                                     <View>
                                         <Text className="text-gray-400 font-bold font-roboto">Nome Completo</Text>
-                                        <Text className="text-white font-bold text-lg font-roboto">{userData?.name || 'Não informado'}</Text>
+                                        <Text className="text-white font-bold text-lg font-roboto">{user?.name || 'Não informado'}</Text>
                                     </View>
                                     <FontAwesome name="angle-right" size={24} color="#FFF" />
                                 </View>
@@ -192,7 +162,7 @@ export default function Profile() {
                                 <View className="flex-row w-full justify-between items-center">
                                     <View>
                                         <Text className="text-gray-400 font-bold font-roboto">Email</Text>
-                                        <Text className="text-white font-bold text-lg font-roboto">{userData?.email || 'Não informado'}</Text>
+                                        <Text className="text-white font-bold text-lg font-roboto">{user?.email || 'Não informado'}</Text>
                                     </View>
                                     <FontAwesome name="angle-right" size={24} color="#FFF" />
                                 </View>
@@ -202,7 +172,7 @@ export default function Profile() {
                                 <View className="flex-row w-full justify-between items-center">
                                     <View>
                                         <Text className="text-gray-400 font-bold font-roboto">Idade</Text>
-                                        <Text className="text-white font-bold text-lg font-roboto">{userData?.age ? `${userData.age} anos` : 'Não informado'}</Text>
+                                        <Text className="text-white font-bold text-lg font-roboto">{user?.age ? `${user.age} anos` : 'Não informado'}</Text>
                                     </View>
                                     <FontAwesome name="angle-right" size={24} color="#FFF" />
                                 </View>
@@ -215,7 +185,6 @@ export default function Profile() {
                                     initialData={measurementsData}
                                     onSave={() => {
                                         setShowMeasurementsForm(false);
-                                        loadUserData();
                                         setRefreshTrigger(prev => prev + 1);
                                     }}
                                     onCancel={() => setShowMeasurementsForm(false)}
@@ -238,8 +207,8 @@ export default function Profile() {
                                 <View className="flex-row justify-between items-center mb-3">
                                     <Text className="text-gray-400 font-bold font-roboto">Tipo de Conta</Text>
                                     <Text className="text-white font-bold font-roboto">
-                                        {userData?.role === 'admin' ? 'Administrador' :
-                                            userData?.role === 'personal' ? 'Personal Trainer' : 'Usuário'}
+                                        {user?.role === 'admin' ? 'Administrador' :
+                                            user?.role === 'personal' ? 'Personal Trainer' : 'Usuário'}
                                     </Text>
                                 </View>
                                 <View className="flex-row justify-between items-center mb-3">
@@ -314,11 +283,11 @@ export default function Profile() {
 
                                 <View className="flex-row justify-between items-center mb-3">
                                     <Text className="text-gray-400 font-bold font-roboto">Membro desde</Text>
-                                    <Text className="text-white font-bold font-roboto">{userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString('pt-BR') : 'N/A'}</Text>
+                                    <Text className="text-white font-bold font-roboto">{user?.createdAt ? new Date(user.createdAt).toLocaleDateString('pt-BR') : 'N/A'}</Text>
                                 </View>
                                 <View className="flex-row justify-between items-center">
                                     <Text className="text-gray-400 font-bold font-roboto">Última atualização</Text>
-                                    <Text className="text-white font-bold font-roboto">{userData?.updatedAt ? new Date(userData.updatedAt).toLocaleDateString('pt-BR') : 'N/A'}</Text>
+                                    <Text className="text-white font-bold font-roboto">{user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString('pt-BR') : 'N/A'}</Text>
                                 </View>
                             </View>
                         </View>
@@ -362,7 +331,7 @@ export default function Profile() {
 
 
                         <View className="w-full mt-8 mb-6">
-                            {(userData?.role === 'personal' || userData?.role === 'admin') && (
+                            {(user?.role === 'personal' || user?.role === 'admin') && (
                                 <TouchableOpacity
                                     className="w-full bg-orange-500 rounded-lg p-4 items-center mb-4"
                                     onPress={() => navigation.navigate('PersonalDashboard' as never)}

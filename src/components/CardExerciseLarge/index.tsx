@@ -2,7 +2,6 @@ import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
 import Button from "../ui/button";
 import { useEffect } from "react";
-import { exerciseService } from "../../services/api";
 import { getExerciseName } from "../../utils/exerciseUtils";
 import { useCompletedExercises } from "../../contexts/CompletedExercisesContext";
 import { logger } from "../../utils/logger";
@@ -15,7 +14,7 @@ interface ICardExerciseLargeProps {
 
 export default function CardExerciseLarge({ name, value, isFinished: initialIsFinished = false }: ICardExerciseLargeProps) {
     const { isExerciseCompleted, markExerciseAsCompleted, unmarkExerciseAsCompleted, refreshCompletedExercises } = useCompletedExercises();
-    
+
     const isFinished = isExerciseCompleted(name);
 
     useEffect(() => {
@@ -40,7 +39,7 @@ export default function CardExerciseLarge({ name, value, isFinished: initialIsFi
                 <View className="flex-row justify-center items-center">
                     <View className="mr-3">
                         <AntDesign
-                            name="checkcircleo"
+                            name="check-circle"
                             size={25}
                             color={"#697f84"}
                         />
@@ -54,7 +53,7 @@ export default function CardExerciseLarge({ name, value, isFinished: initialIsFi
                     <MaterialCommunityIcons
                         name="weight-lifter"
                         size={20}
-                        color={"697f84"}
+                        color={"#697f84"}
                     />
                 </View>
             </Button>
@@ -65,7 +64,7 @@ export default function CardExerciseLarge({ name, value, isFinished: initialIsFi
                 <View className="flex-row justify-center items-center">
                     <View className="mr-3">
                         <AntDesign
-                            name="checkcircle"
+                            name="check-circle"
                             size={25}
                             color={"#4abdd4"}
                         />

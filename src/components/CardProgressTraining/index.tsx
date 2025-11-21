@@ -8,7 +8,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import CardProgressTrainingSkeleton from "./skeleton";
 import { logger } from "../../utils/logger";
 
-
 export default function CardProgressTraining() {
     const { completedExercises, refreshCompletedExercises } = useCompletedExercises();
     const [exercises, setExercises] = useState([]);
@@ -53,9 +52,9 @@ export default function CardProgressTraining() {
             const userFile = await exerciseService.checkUserFile();
 
             if (userFile) {
-                const response = await exerciseService.getExercisesByDay(day);
-                setExercises(response.exercises || []);
-
+                const response = await exerciseService.getExercisesByDay(day, userFile.userId);
+                setExercises(response.exercises);
+                console.log(exercises)
                 await refreshCompletedExercises();
             } else {
                 setExercises([]);
@@ -118,7 +117,7 @@ export default function CardProgressTraining() {
 
     return (
         <View className="w-[95%] h-32 my-6 px-5 rounded-xl justify-center" style={{ backgroundColor: cardColor }}>
-            
+
             <View className="flex-row justify-between mb-5">
                 <View>
                     <Text className="text-white font-extrabold text-2xl font-roboto">{dayTitle}</Text>

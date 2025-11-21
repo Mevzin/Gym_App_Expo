@@ -5,7 +5,8 @@ import { API_URL, API_TIMEOUT } from '@env';
 console.log(API_URL);
 
 const api = axios.create({
-    baseURL: 'http://192.168.0.9:3333/api/v1',
+    // baseURL: 'https://r3fitnesscenter.squareweb.app/api/v1',
+    baseURL: 'http://192.168.0.5:3333/api/v1',
     timeout: parseInt(API_TIMEOUT) || 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -13,7 +14,6 @@ const api = axios.create({
     withCredentials: true,
 });
 
-// Variável para controlar se já existe uma requisição de refresh em andamento
 let isRefreshing = false;
 let failedQueue: any[] = [];
 
@@ -25,7 +25,7 @@ const processQueue = (error: any, token: string | null = null) => {
             prom.resolve(token);
         }
     });
-    
+
     failedQueue = [];
 };
 
@@ -77,7 +77,7 @@ api.interceptors.response.use(
 
                 // Atualiza o token no AsyncStorage
                 await AsyncStorage.setItem('@GymApp:token', accessToken);
-                
+
                 // Atualiza o usuário com o novo refresh token
                 const updatedUser = { ...user, refreshToken: newRefreshToken };
                 await AsyncStorage.setItem('@GymApp:user', JSON.stringify(updatedUser));
@@ -109,13 +109,15 @@ export const authService = {
         try {
             const response = await api.post('/user/login', { email, password });
 
+            console.log(response.data);
+
             // Salva os dados do usuário e tokens
             if (response.data.user && response.data.accessToken && response.data.refreshToken) {
                 const userWithRefreshToken = {
                     ...response.data.user,
                     refreshToken: response.data.refreshToken
                 };
-                
+
                 await AsyncStorage.setItem('@GymApp:user', JSON.stringify(userWithRefreshToken));
                 await AsyncStorage.setItem('@GymApp:token', response.data.accessToken);
             }
@@ -129,6 +131,8 @@ export const authService = {
     register: async (userData: any) => {
         try {
             const response = await api.post('/user/register', userData);
+            console.log(userData);
+
             return response.data;
         } catch (error) {
             throw error;
@@ -204,16 +208,8 @@ export const exerciseService = {
     },
 
 
-    getExercisesByDay: async (day: any) => {
+    getExercisesByDay: async (day: any, userId: string) => {
         try {
-            const userString = await AsyncStorage.getItem('@GymApp:user');
-            let userId = null;
-
-            if (userString) {
-                const user = JSON.parse(userString);
-                userId = user._id || user.id;
-            }
-
             if (!userId) {
                 throw new Error('Usuário não encontrado');
             }
